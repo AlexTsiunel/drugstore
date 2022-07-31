@@ -16,8 +16,8 @@ public class Drug extends PersistableEntityImpl {
     private boolean deleted;
 
     public enum DosageForm{
-        TABLETS,
-        CAPSULES,
+        TABLET,
+        CAPSULE,
         SUSPENSION,
         INJECTION
     }
