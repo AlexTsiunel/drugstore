@@ -12,17 +12,18 @@ public class Drug extends PersistableEntityImpl {
     private RouteAdministration routeAdministration;
     private Boolean isRecipe;
     private BigDecimal price;
+    private Integer quantityInStock;
     private boolean deleted;
 
     public enum DosageForm{
         TABLETS,
         CAPSULES,
         SUSPENSION,
-        INGECTION
+        INJECTION
     }
     public enum RouteAdministration{
         ORALLY,
-        PARENTERALLY
+        PARENTERAL
         //
     }
 }
