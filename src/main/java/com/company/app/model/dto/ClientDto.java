@@ -1,17 +1,18 @@
-package com.company.app.service.dto;
+package com.company.app.model.dto;
 
-import com.company.app.dao.entity.PersistableEntityImpl;
+import com.company.app.model.api.Dto;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class PharmacistDto implements Dto {
+public class ClientDto implements Dto {
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    List<OrderDto> orders;
+    private List<RecipeDto> recipes;
+    private List<OrderDto> orders;
     private boolean deleted;
 }

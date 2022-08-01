@@ -1,15 +1,17 @@
-package com.company.app.dao.entity;
+package com.company.app.model.dto;
 
+import com.company.app.model.api.Dto;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class Pharmacist extends PersistableEntityImpl {
+public class PharmacistDto implements Dto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    List<Order> orders;
+    private List<OrderDto> orders;
     private boolean deleted;
 }

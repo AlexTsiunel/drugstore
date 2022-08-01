@@ -1,14 +1,16 @@
-package com.company.app.dao.entity;
+package com.company.app.model.entity;
 
 import lombok.Data;
 
 import java.util.List;
+
 @Data
-public class Doctor extends PersistableEntityImpl {
+public class Client extends PersistableEntityImpl {
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    List<Recipe> recipes;
+    private List<Recipe> recipes;
+    private List<Order> orders;
     private boolean deleted;
 }

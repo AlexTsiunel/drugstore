@@ -1,6 +1,6 @@
-package com.company.app.service.dto;
+package com.company.app.model.dto;
 
-import com.company.app.dao.entity.PersistableEntityImpl;
+import com.company.app.model.api.Dto;
 import lombok.Data;
 
 import java.math.BigDecimal;

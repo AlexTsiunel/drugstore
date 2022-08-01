@@ -1,4 +1,4 @@
-package com.company.app.dao.entity;
+package com.company.app.model.entity;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class Recipe extends PersistableEntityImpl {
     private Client client;
     private Doctor doctor;
-    private List<Drug> drug;
+    private List<Drug> drugs;
     private Date startDate;
     private Date endDate;
     private boolean deleted;

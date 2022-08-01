@@ -1,7 +1,7 @@
-package com.company.app.service.dto;
+package com.company.app.model.dto;
 
-import com.company.app.dao.entity.Client;
-import com.company.app.dao.entity.Drug;
+import com.company.app.model.api.Dto;
+import com.company.app.model.entity.Client;
 import lombok.Data;
 
 import java.util.Map;
@@ -9,10 +9,10 @@ import java.util.Map;
 @Data
 public class OrderDto implements Dto {
     private Long id;
-    private Client client;
+    private ClientDto client;
     private Map<DrugDto, Integer> drugs;
     private PharmacistDto pharmacist;
-    OrderStatus status;
+    private OrderStatus status;
     private boolean deleted;
 
     public enum OrderStatus{

@@ -1,4 +1,4 @@
-package com.company.app.dao.entity;
+package com.company.app.model.entity;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ public class Order extends PersistableEntityImpl {
     private Client client;
     private Map<Drug, Integer> drugs;
     private Pharmacist pharmacist;
-    OrderStatus status;
+    private OrderStatus status;
     private boolean deleted;
 
     public enum OrderStatus{

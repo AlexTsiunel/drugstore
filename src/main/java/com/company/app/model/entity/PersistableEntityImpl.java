@@ -1,5 +1,6 @@
-package com.company.app.dao.entity;
+package com.company.app.model.entity;
 
+import com.company.app.model.api.PersistableEntity;
 import lombok.Data;
 
 @Data

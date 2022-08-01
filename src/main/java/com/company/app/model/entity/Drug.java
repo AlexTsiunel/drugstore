@@ -1,4 +1,4 @@
-package com.company.app.dao.entity;
+package com.company.app.model.entity;
 
 import lombok.Data;
 
