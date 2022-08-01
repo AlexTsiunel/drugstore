@@ -28,8 +28,8 @@ public class DrugDaoImpl implements DragDao {
             "JOIN route_administration ra \n" +
             "ON ra.id  = d.route_administration_id \n" +
             "WHERE d.id = ? AND d.deleted = FALSE;";
-    private static final String INSERT = "INSERT INTO drugs d (d.name, d.release_form, d.dosage_form_id, d.route_administration_id, d.is_recipe, d.price, d.quantity_in_stock) VALUES (?, ?, (SELECT id FROM dosage_form df WHERE df.name = ?), (SELECT id FROM route_administration ra WHERE ra.name = ?) ?, ?, ?)";
-    private static final String UPDATE = "UPDATE drugs SET id, name, release_form, dosage_form_id, route_administration_id, is_recipe, price, quantity_in_stock WHERE id = ? AND deleted = FALSE";
+    private static final String INSERT = "INSERT INTO drugs (name, release_form, dosage_form_id, route_administration_id, is_recipe, price, quantity_in_stock) VALUES (?, ?, (SELECT id FROM dosage_form df WHERE df.name = ?), (SELECT id FROM route_administration ra WHERE ra.name = ?), ?, ?, ?);";
+    private static final String UPDATE = "UPDATE drugs SET name = ?, release_form = ?, dosage_form_id = (SELECT id FROM dosage_form df WHERE df.name = ?), route_administration_id = (SELECT id FROM route_administration ra WHERE ra.name = ?), is_recipe = ?, price = ?, quantity_in_stock = ? WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE drugs SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
 
     private final DataSource dataSource;
@@ -41,23 +41,24 @@ public class DrugDaoImpl implements DragDao {
 
     @Override
     public Drug getById(Long id) {
-        logger.debug("Database query. Table drugs.");
+        logger.debug("Database query. Table drugs");
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
+                logger.debug("Executed method: getById");
                 return process(result);
             }
         } catch (SQLException e) {
-            logger.error("Failed to query the database. Table drugs.", e);
+            logger.error("Method failed: getById", e);
         }
         return null;
     }
 
     @Override
     public Drug saveOrUpdate(Drug entity) {
-        logger.debug("Database query. Table drugs.");
+        logger.debug("Database query. Table drugs");
         PreparedStatement statement;
         try {
             if (entity.getId() == null) {
@@ -68,6 +69,7 @@ public class DrugDaoImpl implements DragDao {
                 ResultSet keys = statement.getGeneratedKeys();
                 if (keys.next()) {
                     Long id = keys.getLong(1);
+                    logger.debug("Executed method: saveOrUpdate/save");
                     return getById(id);
                 }
 
@@ -76,17 +78,18 @@ public class DrugDaoImpl implements DragDao {
                 processStatement(entity, statement);
                 statement.setLong(8, entity.getId());
                 statement.executeUpdate();
+                logger.debug("Executed method: saveOrUpdate/update");
                 return getById(entity.getId());
             }
         } catch (SQLException e) {
-            logger.error("Failed to query the database. Table drugs.", e);
+            logger.error("Method failed: saveOrUpdate", e);
         }
         return null;
     }
 
     @Override
     public List<Drug> getAll() {
-        logger.debug("Database query. Table drugs.");
+        logger.debug("Database query. Table drugs");
         try {
             List<Drug> list = new ArrayList<>();
             Statement statement = dataSource.getConnection().createStatement();
@@ -94,27 +97,33 @@ public class DrugDaoImpl implements DragDao {
             while (result.next()) {
                 list.add(process(result));
             }
+            logger.debug("Executed method: getAll");
             return list;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Method failed: getAll", e);
         }
         return null;
     }
 
     @Override
     public boolean delete(Long id) {
-        logger.debug("Database query. Table drugs.");
+        logger.debug("Database query. Table drugs");
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
-            return rowsDeleted == 1;
+            if (rowsDeleted == 1) {
+                logger.debug("Executed method: delete");
+                return true;
+            }
+            return false;
 
         } catch (SQLException e) {
-            logger.error("Failed to query the database. Table drugs.", e);
+            logger.error("Method failed: delete", e);
         }
         return false;
     }
+
     private Drug process(ResultSet result) throws SQLException {
         Drug drug = new Drug();
         drug.setId(result.getLong("id"));
@@ -127,6 +136,7 @@ public class DrugDaoImpl implements DragDao {
         drug.setQuantityInStock(result.getInt("quantity_in_stock"));
         return drug;
     }
+
     private void processStatement(Drug entity, PreparedStatement statement) throws SQLException {
         statement.setString(1, entity.getName());
         statement.setString(2, entity.getReleaseForm());
