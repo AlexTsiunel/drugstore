@@ -1,6 +1,6 @@
 package com.company.app.dao.impl;
 
-import com.company.app.dao.DragDao;
+import com.company.app.dao.DrugDao;
 import com.company.app.dao.connection.DataSource;
 import com.company.app.dao.entity.Drug;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrugDaoImpl implements DragDao {
+public class DrugDaoImpl implements DrugDao {
     private static final String SELECT_ALL = "SELECT d.id ,d.name, d.release_form, df.name AS dosage_form, ra.name AS route_administration, d.is_recipe, d.price, d.quantity_in_stock \n" +
             "FROM drugs d \n" +
             "JOIN dosage_form df \n" +
