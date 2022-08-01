@@ -2,8 +2,7 @@ package com.company.app.dao.impl;
 
 import com.company.app.dao.ClientDao;
 import com.company.app.dao.connection.DataSource;
-import com.company.app.dao.entity.Client;
-import com.company.app.dao.entity.Drug;
+import com.company.app.model.entity.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
