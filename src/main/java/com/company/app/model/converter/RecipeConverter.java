@@ -21,6 +21,7 @@ public class RecipeConverter implements Convert<RecipeDto, Recipe> {
         if(entity!=null){
             recipeDto.setId(entity.getId());
             recipeDto.setClient(clientConverter.convertEntityToDto(entity.getClient()));
+            recipeDto.setDoctor(doctorConverter.convertEntityToDto(entity.getDoctor()));
             recipeDto.setDrugs(drugConverter.convertEntitiesToDtos(entity.getDrugs()));
             recipeDto.setStartDate(entity.getStartDate());
             recipeDto.setEndDate(entity.getEndDate());
@@ -35,6 +36,7 @@ public class RecipeConverter implements Convert<RecipeDto, Recipe> {
         if(dto!=null){
             recipe.setId(dto.getId());
             recipe.setClient(clientConverter.convertDtoToEntity(dto.getClient()));
+            recipe.setDoctor(doctorConverter.convertDtoToEntity(dto.getDoctor()));
             recipe.setDrugs(drugConverter.convertDtosToEntities(dto.getDrugs()));
             recipe.setStartDate(dto.getStartDate());
             recipe.setEndDate(dto.getEndDate());
