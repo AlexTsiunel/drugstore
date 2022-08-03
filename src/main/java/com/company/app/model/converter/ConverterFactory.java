@@ -12,12 +12,12 @@ public class ConverterFactory {
 
     private ConverterFactory() {
         map = new HashMap<>();
-        map.put(ClientConverter.class, new ClientConverter(ConverterFactory.getInstance().getConverter(OrderConverter.class), ConverterFactory.getInstance().getConverter(RecipeConverter.class)));
-        map.put(DoctorConverter.class, new DoctorConverter(ConverterFactory.getInstance().getConverter(RecipeConverter.class)));
+        map.put(ClientConverter.class, new ClientConverter(getConverter(OrderConverter.class), getConverter(RecipeConverter.class)));
+        map.put(DoctorConverter.class, new DoctorConverter(getConverter(RecipeConverter.class)));
         map.put(DrugConverter.class, new DrugConverter());
-        map.put(OrderConverter.class, new OrderConverter(ConverterFactory.getInstance().getConverter(ClientConverter.class), ConverterFactory.getInstance().getConverter(DrugConverter.class), ConverterFactory.getInstance().getConverter(PharmacistConverter.class)));
-        map.put(PharmacistConverter.class, new PharmacistConverter(ConverterFactory.getInstance().getConverter(OrderConverter.class)));
-        map.put(RecipeConverter.class, new RecipeConverter(ConverterFactory.getInstance().getConverter(ClientConverter.class), ConverterFactory.getInstance().getConverter(DoctorConverter.class), ConverterFactory.getInstance().getConverter(DrugConverter.class)));
+        map.put(OrderConverter.class, new OrderConverter(getConverter(ClientConverter.class), getConverter(DrugConverter.class), getConverter(PharmacistConverter.class)));
+        map.put(PharmacistConverter.class, new PharmacistConverter(getConverter(OrderConverter.class)));
+        map.put(RecipeConverter.class, new RecipeConverter(getConverter(ClientConverter.class), getConverter(DoctorConverter.class), getConverter(DrugConverter.class)));
     }
 
     @SuppressWarnings("unchecked")
