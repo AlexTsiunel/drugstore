@@ -1,13 +1,8 @@
 package com.company.app.service;
 
-import com.company.app.dao.ClientDao;
-import com.company.app.dao.DaoFactory;
-import com.company.app.dao.DrugDao;
-import com.company.app.model.converter.ClientConverter;
-import com.company.app.model.converter.ConverterFactory;
-import com.company.app.model.converter.DrugConverter;
-import com.company.app.service.impl.ClientServiceImpl;
-import com.company.app.service.impl.DrugServiceImpl;
+import com.company.app.dao.*;
+import com.company.app.model.converter.*;
+import com.company.app.service.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +17,11 @@ public class ServiceFactory {
     private ServiceFactory() {
         map = new HashMap<>();
         map.put(ClientService.class, new ClientServiceImpl(DaoFactory.getInstance().getDao(ClientDao.class), ConverterFactory.getInstance().getConverter(ClientConverter.class)));
+        map.put(DoctorService.class, new DoctorServiceImpl(DaoFactory.getInstance().getDao(DoctorDao.class), ConverterFactory.getInstance().getConverter(DoctorConverter.class)));
         map.put(DrugService.class, new DrugServiceImpl(DaoFactory.getInstance().getDao(DrugDao.class), ConverterFactory.getInstance().getConverter(DrugConverter.class)));
+        map.put(PharmacistService.class, new PharmacistServiceImpl(DaoFactory.getInstance().getDao(PharmacistDao.class), ConverterFactory.getInstance().getConverter(PharmacistConverter.class)));
+        map.put(RecipeService.class, new RecipeServiceImpl(DaoFactory.getInstance().getDao(RecipeDao.class), ConverterFactory.getInstance().getConverter(RecipeConverter.class)));
+        map.put(OrderService.class, new OrderServiceImpl(DaoFactory.getInstance().getDao(OrderDao.class), ConverterFactory.getInstance().getConverter(OrderConverter.class)));
     }
 
 

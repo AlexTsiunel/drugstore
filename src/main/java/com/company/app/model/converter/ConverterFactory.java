@@ -5,10 +5,8 @@ import java.util.Map;
 
 public class ConverterFactory {
     private final Map<Class<?>, Object> map;
+    private static ConverterFactory INSTANCE;
 
-    private static class ConverterFactoryHolder {
-        public static final ConverterFactory HOLDER_INSTANCE = new ConverterFactory();
-    }
 
     private ConverterFactory() {
         map = new HashMap<>();
@@ -19,13 +17,15 @@ public class ConverterFactory {
         map.put(PharmacistConverter.class, new PharmacistConverter(getConverter(OrderConverter.class)));
         map.put(RecipeConverter.class, new RecipeConverter(getConverter(ClientConverter.class), getConverter(DoctorConverter.class), getConverter(DrugConverter.class)));
     }
+    public static ConverterFactory getInstance(){
+        if (INSTANCE == null){
+            INSTANCE = new ConverterFactory();
+        }
+        return INSTANCE;
+    }
 
     @SuppressWarnings("unchecked")
     public <T> T getConverter(Class<T> clazz) {
         return (T) map.get(clazz);
-    }
-
-    public static ConverterFactory getInstance() {
-        return ConverterFactoryHolder.HOLDER_INSTANCE;
     }
 }

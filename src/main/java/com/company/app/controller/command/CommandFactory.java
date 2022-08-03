@@ -1,5 +1,6 @@
 package com.company.app.controller.command;
 
+import com.company.app.service.ClientService;
 import com.company.app.service.DrugService;
 import com.company.app.service.ServiceFactory;
 
@@ -17,6 +18,8 @@ public class CommandFactory {
         this.commands = new HashMap<>();
         commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("clients", new AllClientsCommand(ServiceFactory.getInstance().getService(ClientService.class)));
+        commands.put("client", new GetClientCommand(ServiceFactory.getInstance().getService(ClientService.class)));
 
         commands.put("error", new ErrorCommand());
     }
