@@ -20,7 +20,6 @@ public class DrugServiceImpl implements DrugService {
     @Override
     public DrugDto getById(Long id) {
         return drugConverter.convertEntityToDto(drugDao.getById(id));
-
     }
 
     @Override
@@ -31,7 +30,6 @@ public class DrugServiceImpl implements DrugService {
 
     @Override
     public List<DrugDto> getAll() {
-
         return drugConverter.convertEntitiesToDtos(drugDao.getAll());
     }
 
