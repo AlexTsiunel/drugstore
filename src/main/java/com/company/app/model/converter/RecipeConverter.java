@@ -4,15 +4,14 @@ import com.company.app.model.api.Convert;
 import com.company.app.model.dto.RecipeDto;
 import com.company.app.model.entity.Recipe;
 
-public class RecipeConverter implements Convert<RecipeDto, Recipe> {
+public class RecipeConverter extends Convert<RecipeDto, Recipe> {
+
     private ClientConverter clientConverter;
     private DoctorConverter doctorConverter;
-    private DrugConverter drugConverter;
 
-    public RecipeConverter(ClientConverter clientConverter, DoctorConverter doctorConverter, DrugConverter drugConverter) {
+    public RecipeConverter(ClientConverter clientConverter, DoctorConverter doctorConverter) {
         this.clientConverter = clientConverter;
         this.doctorConverter = doctorConverter;
-        this.drugConverter = drugConverter;
     }
 
     @Override
@@ -22,7 +21,6 @@ public class RecipeConverter implements Convert<RecipeDto, Recipe> {
             recipeDto.setId(entity.getId());
             recipeDto.setClient(clientConverter.convertEntityToDto(entity.getClient()));
             recipeDto.setDoctor(doctorConverter.convertEntityToDto(entity.getDoctor()));
-            recipeDto.setDrugs(drugConverter.convertEntitiesToDtos(entity.getDrugs()));
             recipeDto.setStartDate(entity.getStartDate());
             recipeDto.setEndDate(entity.getEndDate());
             recipeDto.setDeleted(entity.isDeleted());
@@ -31,16 +29,15 @@ public class RecipeConverter implements Convert<RecipeDto, Recipe> {
     }
 
     @Override
-    public Recipe convertDtoToEntity(RecipeDto dto) {
+    public Recipe convertDtoToEntity(RecipeDto recipeDto) {
         Recipe recipe = new Recipe();
-        if(dto!=null){
-            recipe.setId(dto.getId());
-            recipe.setClient(clientConverter.convertDtoToEntity(dto.getClient()));
-            recipe.setDoctor(doctorConverter.convertDtoToEntity(dto.getDoctor()));
-            recipe.setDrugs(drugConverter.convertDtosToEntities(dto.getDrugs()));
-            recipe.setStartDate(dto.getStartDate());
-            recipe.setEndDate(dto.getEndDate());
-            recipe.setDeleted(dto.isDeleted());
+        if(recipeDto!=null){
+            recipe.setId(recipeDto.getId());
+            recipe.setClient(clientConverter.convertDtoToEntity(recipeDto.getClient()));
+            recipe.setDoctor(doctorConverter.convertDtoToEntity(recipeDto.getDoctor()));
+            recipe.setStartDate(recipeDto.getStartDate());
+            recipe.setEndDate(recipeDto.getEndDate());
+            recipe.setDeleted(recipeDto.isDeleted());
         }
         return recipe;
     }

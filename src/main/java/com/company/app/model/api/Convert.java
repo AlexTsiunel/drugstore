@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface Convert<D extends Dto, E extends PersistableEntity> {
-    D convertEntityToDto(E entity);
+public abstract class Convert<D extends Dto, E extends PersistableEntity> {
+    public D convertEntityToDto(E entity) {
+        return null;
+    }
 
-    E convertDtoToEntity(D dto);
+    public E convertDtoToEntity(D dto) {
+        return null;
+    }
 
-    default List<E> convertDtosToEntities(List<D> dtos) {
+     public List<E> convertDtosToEntities(List<D> dtos) {
         if (dtos != null) {
             return dtos.stream().map(this::convertDtoToEntity).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
 
-    default List<D> convertEntitiesToDtos(List<E> entities) {
+    public List<D> convertEntitiesToDtos(List<E> entities) {
         if (entities != null) {
             return entities.stream().map(this::convertEntityToDto).collect(Collectors.toList());
         }
