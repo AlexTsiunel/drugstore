@@ -15,6 +15,6 @@
     <p>${client.lastName}</p>
     <h3>Email</h3>
     <p>${client.email}</p>
-    <h3><a href="controller?command=clients">All drugs</a></h3>
+    <h3><a href="controller?command=clients">All clients</a></h3>
   </body>
 </html>

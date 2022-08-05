@@ -1,5 +1,9 @@
 package com.company.app.controller.command;
 
+import com.company.app.controller.command.client.AllClientsCommand;
+import com.company.app.controller.command.client.GetClientCommand;
+import com.company.app.controller.command.drug.AllDrugsCommand;
+import com.company.app.controller.command.drug.GetDrugCommand;
 import com.company.app.service.ClientService;
 import com.company.app.service.DrugService;
 import com.company.app.service.ServiceFactory;

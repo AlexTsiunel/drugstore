@@ -1,12 +1,13 @@
-package com.company.app.controller.command;
+package com.company.app.controller.command.client;
 
+import com.company.app.controller.command.Command;
 import com.company.app.model.dto.ClientDto;
 import com.company.app.service.ClientService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-public class AllClientsCommand implements Command{
+public class AllClientsCommand implements Command {
     private final ClientService clientService;
 
     public AllClientsCommand(ClientService clientService) {

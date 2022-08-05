@@ -1,12 +1,13 @@
-package com.company.app.controller.command;
+package com.company.app.controller.command.drug;
 
+import com.company.app.controller.command.Command;
 import com.company.app.model.dto.DrugDto;
 import com.company.app.service.DrugService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-public class AllDrugsCommand implements Command{
+public class AllDrugsCommand implements Command {
     private final DrugService drugService;
 
     public AllDrugsCommand(DrugService drugService) {
