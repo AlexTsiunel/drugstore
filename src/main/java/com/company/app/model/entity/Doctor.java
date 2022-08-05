@@ -9,6 +9,5 @@ public class Doctor extends PersistableEntityImpl {
     private String lastName;
     private String email;
     private String password;
-    private List<Recipe> recipes;
     private boolean deleted;
 }

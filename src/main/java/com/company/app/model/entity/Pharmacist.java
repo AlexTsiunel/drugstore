@@ -10,6 +10,5 @@ public class Pharmacist extends PersistableEntityImpl {
     private String lastName;
     private String email;
     private String password;
-    private List<Order> orders;
     private boolean deleted;
 }

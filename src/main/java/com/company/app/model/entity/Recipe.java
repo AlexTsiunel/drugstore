@@ -8,7 +8,6 @@ import java.util.List;
 public class Recipe extends PersistableEntityImpl {
     private Client client;
     private Doctor doctor;
-    private List<Drug> drugs;
     private Date startDate;
     private Date endDate;
     private boolean deleted;
