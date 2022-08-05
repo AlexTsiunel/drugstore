@@ -17,6 +17,6 @@ public class GetClientCommand implements Command {
         Long id = Long.parseLong(req.getParameter("id"));
         ClientDto client = clientService.getById(id);
         req.setAttribute("client", client);
-        return "jsp/client.jsp";
+        return "jsp/client/client.jsp";
     }
 }

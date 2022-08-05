@@ -16,6 +16,6 @@ public class GetDrugCommand implements Command {
         Long id = Long.parseLong(req.getParameter("id"));
         DrugDto drug = drugService.getById(id);
         req.setAttribute("drug", drug);
-        return "jsp/drug.jsp";
+        return "jsp/drug/drug.jsp";
     }
 }

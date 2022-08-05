@@ -18,6 +18,6 @@ public class AllDrugsCommand implements Command {
     public String execute(HttpServletRequest req) {
         List<DrugDto> drugs = drugService.getAll();
         req.setAttribute("drugs", drugs);
-        return "jsp/drugs.jsp";
+        return "jsp/drug/drugs.jsp";
     }
 }

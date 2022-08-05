@@ -18,6 +18,6 @@ public class AllClientsCommand implements Command {
     public String execute(HttpServletRequest req) {
         List<ClientDto> clients = clientService.getAll();
         req.setAttribute("clients", clients);
-        return "jsp/clients.jsp";
+        return "jsp/client/clients.jsp";
     }
 }
