@@ -5,17 +5,19 @@ import com.company.app.model.converter.ClientConverter;
 import com.company.app.model.dto.ClientDto;
 
 import com.company.app.model.entity.Client;
+import com.company.app.model.exception.NoDeleteElementException;
+import com.company.app.model.exception.NoSuchElementException;
 import com.company.app.service.ClientService;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-
+@Log4j2
 public class ClientServiceImpl implements ClientService {
     private final ClientDao clientDao;
     private final ClientConverter clientConverter;
 
-    private static Logger logger = LogManager.getLogger(ClientServiceImpl.class);
 
     public ClientServiceImpl(ClientDao clientDao, ClientConverter clientConverter) {
         this.clientDao = clientDao;
@@ -24,27 +26,33 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto getById(Long id) {
-        logger.debug("Calling the 'getById' method");
+        log.debug("Calling the 'getById' method");
         Client client = clientDao.getById(id);
+        if(client == null){
+            throw new NoSuchElementException(String.format("Client with id=%d not found",id));
+        }
         return clientConverter.convertEntityToDto(client);
     }
 
     @Override
     public ClientDto saveOrUpdate(ClientDto clientDto) {
-        logger.debug("Calling the 'saveOrUpdate' method");
+        log.debug("Calling the 'saveOrUpdate' method");
         Client client = clientDao.saveOrUpdate(clientConverter.convertDtoToEntity(clientDto));
         return clientConverter.convertEntityToDto(client);
     }
 
     @Override
     public List<ClientDto> getAll() {
-        logger.debug("Calling the 'getAll' method");
+        log.debug("Calling the 'getAll' method");
+
         return clientConverter.convertEntitiesToDtos(clientDao.getAll());
     }
 
     @Override
     public void delete(Long id) {
-        logger.debug("Calling the 'delete' method");
-        clientDao.delete(id);
+        log.debug("Calling the 'delete' method");
+        if(!clientDao.delete(id)){
+            throw new NoDeleteElementException("Failed to delete client with id=" + id);
+        }
     }
 }
