@@ -3,6 +3,7 @@ package com.company.app.dao.impl;
 import com.company.app.dao.DrugDao;
 import com.company.app.dao.connection.DataSource;
 import com.company.app.model.entity.Drug;
+import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrugDaoImpl implements DrugDao {
-    private static final String SELECT_ALL = "SELECT d.id ,d.name, d.release_form, df.name AS dosage_form, ra.name AS route_administration, d.is_recipe, d.price, d.quantity_in_stock \n" +
+    private static final String SELECT_ALL = "SELECT d.id ,d.name, d.release_form, df.name AS dosage_form, ra.name AS route_administration, d.is_recipe, d.price, d.quantity_in_stock, d.deleted \n" +
             "FROM drugs d \n" +
             "JOIN dosage_form df \n" +
             "ON  df.id = d.dosage_form_id\n" +
             "JOIN route_administration ra \n" +
             "ON ra.id  = d.route_administration_id \n" +
             "WHERE d.deleted = FALSE;";
-    private static final String SELECT_BY_ID = "SELECT d.id ,d.name, d.release_form, df.name AS dosage_form, ra.name AS route_administration, d.is_recipe, d.price, d.quantity_in_stock \n" +
+    private static final String SELECT_BY_ID = "SELECT d.id ,d.name, d.release_form, df.name AS dosage_form, ra.name AS route_administration, d.is_recipe, d.price, d.quantity_in_stock, d.deleted \n" +
             "FROM drugs d \n" +
             "JOIN dosage_form df \n" +
             "ON  df.id = d.dosage_form_id\n" +
@@ -48,7 +49,7 @@ public class DrugDaoImpl implements DrugDao {
             ResultSet result = statement.executeQuery();
             if (result.next()) {
                 logger.debug("Executed method: getById");
-                return process(result);
+                return processEntity(result);
             }
         } catch (SQLException e) {
             logger.error("Method failed: getById", e);
@@ -84,7 +85,7 @@ public class DrugDaoImpl implements DrugDao {
         } catch (SQLException e) {
             logger.error("Method failed: saveOrUpdate", e);
         }
-        return null;
+        throw new NoCreatedOrUpdatedElementException("Failed to add or update drug");
     }
 
     @Override
@@ -95,7 +96,7 @@ public class DrugDaoImpl implements DrugDao {
             Statement statement = dataSource.getConnection().createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
-                list.add(process(result));
+                list.add(processEntity(result));
             }
             logger.debug("Executed method: getAll");
             return list;
@@ -124,7 +125,7 @@ public class DrugDaoImpl implements DrugDao {
         return false;
     }
 
-    private Drug process(ResultSet result) throws SQLException {
+    private Drug processEntity(ResultSet result) throws SQLException {
         Drug drug = new Drug();
         drug.setId(result.getLong("id"));
         drug.setName(result.getString("name"));
@@ -134,6 +135,7 @@ public class DrugDaoImpl implements DrugDao {
         drug.setIsRecipe(result.getBoolean("is_recipe"));
         drug.setPrice(result.getBigDecimal("price"));
         drug.setQuantityInStock(result.getInt("quantity_in_stock"));
+        drug.setDeleted(result.getBoolean("deleted"));
         return drug;
     }
 
