@@ -11,7 +11,6 @@ public class RecipeDto implements Dto {
     private Long id;
     private ClientDto client;
     private DoctorDto doctor;
-    private List<DrugDto> drugs;
     private Date startDate;
     private Date endDate;
     private boolean deleted;

@@ -11,6 +11,5 @@ public class DoctorDto implements Dto {
     private String lastName;
     private String email;
     private String password;
-    private List<RecipeDto> recipes;
     private boolean deleted;
 }

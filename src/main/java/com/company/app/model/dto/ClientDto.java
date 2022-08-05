@@ -12,7 +12,5 @@ public class ClientDto implements Dto {
     private String lastName;
     private String email;
     private String password;
-    private List<RecipeDto> recipes;
-    private List<OrderDto> orders;
     private boolean deleted;
 }

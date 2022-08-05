@@ -12,6 +12,5 @@ public class PharmacistDto implements Dto {
     private String lastName;
     private String email;
     private String password;
-    private List<OrderDto> orders;
     private boolean deleted;
 }
