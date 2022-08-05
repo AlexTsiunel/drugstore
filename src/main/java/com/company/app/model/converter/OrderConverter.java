@@ -9,15 +9,11 @@ import com.company.app.model.entity.Order;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OrderConverter implements Convert<OrderDto, Order> {
-    private ClientConverter clientConverter;
+public class OrderConverter extends Convert<OrderDto, Order> {
     private DrugConverter drugConverter;
-    private PharmacistConverter pharmacistConverter;
 
-    public OrderConverter(ClientConverter clientConverter, DrugConverter drugConverter, PharmacistConverter pharmacistConverter) {
-        this.clientConverter = clientConverter;
+    public OrderConverter(DrugConverter drugConverter) {
         this.drugConverter = drugConverter;
-        this.pharmacistConverter = pharmacistConverter;
     }
 
     @Override
@@ -25,9 +21,8 @@ public class OrderConverter implements Convert<OrderDto, Order> {
         OrderDto orderDto = new OrderDto();
         if (entity != null) {
             orderDto.setId(entity.getId());
-            orderDto.setClient(clientConverter.convertEntityToDto(entity.getClient()));
             orderDto.setDrugs(toDtosMap(entity.getDrugs()));
-            orderDto.setPharmacist(pharmacistConverter.convertEntityToDto(entity.getPharmacist()));
+            orderDto.setTotalCoast(entity.getTotalCoast());
             orderDto.setStatus(toOrderStatusDto(entity.getStatus()));
             orderDto.setDeleted(entity.isDeleted());
         }
@@ -35,15 +30,14 @@ public class OrderConverter implements Convert<OrderDto, Order> {
     }
 
     @Override
-    public Order convertDtoToEntity(OrderDto dto) {
+    public Order convertDtoToEntity(OrderDto orderDto) {
         Order order = new Order();
-        if (dto != null) {
-            order.setId(dto.getId());
-            order.setClient(clientConverter.convertDtoToEntity(dto.getClient()));
-            order.setDrugs(toEntitiesMap(dto.getDrugs()));
-            order.setPharmacist(pharmacistConverter.convertDtoToEntity(dto.getPharmacist()));
-            order.setStatus(toOrderStatusEntity(dto.getStatus()));
-            order.setDeleted(dto.isDeleted());
+        if (orderDto != null) {
+            order.setId(orderDto.getId());
+            order.setDrugs(toEntitiesMap(orderDto.getDrugs()));
+            order.setTotalCoast(orderDto.getTotalCoast());
+            order.setStatus(toOrderStatusEntity(orderDto.getStatus()));
+            order.setDeleted(orderDto.isDeleted());
         }
         return order;
     }

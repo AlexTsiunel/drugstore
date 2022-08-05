@@ -4,7 +4,7 @@ import com.company.app.model.api.Convert;
 import com.company.app.model.dto.DrugDto;
 import com.company.app.model.entity.Drug;
 
-public class DrugConverter implements Convert<DrugDto, Drug> {
+public class DrugConverter extends Convert<DrugDto, Drug> {
     @Override
     public DrugDto convertEntityToDto(Drug entity) {
         DrugDto drugDto = new DrugDto();
@@ -17,6 +17,7 @@ public class DrugConverter implements Convert<DrugDto, Drug> {
             drugDto.setIsRecipe(entity.getIsRecipe());
             drugDto.setPrice(entity.getPrice());
             drugDto.setQuantityInStock(entity.getQuantityInStock());
+            drugDto.setDeleted(entity.isDeleted());
         }
         return drugDto;
     }
@@ -32,6 +33,7 @@ public class DrugConverter implements Convert<DrugDto, Drug> {
             drug.setIsRecipe(dto.getIsRecipe());
             drug.setPrice(dto.getPrice());
             drug.setQuantityInStock(dto.getQuantityInStock());
+            drug.setDeleted(dto.isDeleted());
         }
         return drug;
     }

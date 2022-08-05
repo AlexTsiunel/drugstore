@@ -4,12 +4,7 @@ import com.company.app.model.api.Convert;
 import com.company.app.model.dto.PharmacistDto;
 import com.company.app.model.entity.Pharmacist;
 
-public class PharmacistConverter implements Convert<PharmacistDto, Pharmacist> {
-    private OrderConverter orderConverter;
-
-    public PharmacistConverter(OrderConverter orderConverter) {
-        this.orderConverter = orderConverter;
-    }
+public class PharmacistConverter extends Convert<PharmacistDto, Pharmacist> {
 
     @Override
     public PharmacistDto convertEntityToDto(Pharmacist entity) {
@@ -19,7 +14,6 @@ public class PharmacistConverter implements Convert<PharmacistDto, Pharmacist> {
             pharmacistDto.setFirstName(entity.getLastName());
             pharmacistDto.setEmail(entity.getEmail());
             pharmacistDto.setPassword(entity.getPassword());
-            pharmacistDto.setOrders(orderConverter.convertEntitiesToDtos(entity.getOrders()));
             pharmacistDto.setDeleted(entity.isDeleted());
         }
         return pharmacistDto;
@@ -33,7 +27,6 @@ public class PharmacistConverter implements Convert<PharmacistDto, Pharmacist> {
             pharmacist.setFirstName(dto.getLastName());
             pharmacist.setEmail(dto.getEmail());
             pharmacist.setPassword(dto.getPassword());
-            pharmacist.setOrders(orderConverter.convertDtosToEntities(dto.getOrders()));
             pharmacist.setDeleted(dto.isDeleted());
         }
         return pharmacist;
