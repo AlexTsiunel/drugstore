@@ -10,9 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OrderConverter extends Convert<OrderDto, Order> {
+    private ClientConverter clientConverter;
+    private PharmacistConverter pharmacistConverter;
     private DrugConverter drugConverter;
 
-    public OrderConverter(DrugConverter drugConverter) {
+    public OrderConverter(ClientConverter clientConverter, PharmacistConverter pharmacistConverter, DrugConverter drugConverter) {
+        this.clientConverter = clientConverter;
+        this.pharmacistConverter = pharmacistConverter;
         this.drugConverter = drugConverter;
     }
 
@@ -21,6 +25,8 @@ public class OrderConverter extends Convert<OrderDto, Order> {
         OrderDto orderDto = new OrderDto();
         if (entity != null) {
             orderDto.setId(entity.getId());
+            orderDto.setClient(clientConverter.convertEntityToDto(entity.getClient()));
+            orderDto.setPharmacist(pharmacistConverter.convertEntityToDto(entity.getPharmacist()));
             orderDto.setDrugs(toDtosMap(entity.getDrugs()));
             orderDto.setTotalCoast(entity.getTotalCoast());
             orderDto.setStatus(toOrderStatusDto(entity.getStatus()));

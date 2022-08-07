@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface OrderInfoDao extends AbstractDao<Long, OrderInfo>{
 
-    Map<Drug, Integer> getMapDrugs(Long id);
+    Map<Drug, Integer> getMapDrugsByOrderId(Long id);
 }

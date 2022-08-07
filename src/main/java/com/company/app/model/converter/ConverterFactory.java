@@ -14,7 +14,7 @@ public class ConverterFactory {
         map.put(ClientConverter.class, new ClientConverter());
         map.put(DoctorConverter.class, new DoctorConverter());
         map.put(PharmacistConverter.class, new PharmacistConverter());
-        map.put(OrderConverter.class, new OrderConverter(getConverter(DrugConverter.class)));
+        map.put(OrderConverter.class, new OrderConverter(getConverter(ClientConverter.class), getConverter(PharmacistConverter .class), getConverter(DrugConverter.class)));
         map.put(RecipeConverter.class, new RecipeConverter(getConverter(ClientConverter.class), getConverter(DoctorConverter.class)));
     }
     public static ConverterFactory getInstance(){

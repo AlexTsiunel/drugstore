@@ -19,7 +19,7 @@ public class OrderDto implements Dto {
 
     public enum OrderStatus{
         PROCESSING,
-        AWAITING_PAYMENT,
+        PENDING,
         PAID,
         CANCELED
     }

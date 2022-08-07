@@ -11,7 +11,8 @@ public class PharmacistConverter extends Convert<PharmacistDto, Pharmacist> {
         PharmacistDto pharmacistDto = new PharmacistDto();
         if(pharmacistDto != null){
             pharmacistDto.setId(entity.getId());
-            pharmacistDto.setFirstName(entity.getLastName());
+            pharmacistDto.setFirstName(entity.getFirstName());
+            pharmacistDto.setLastName(entity.getLastName());
             pharmacistDto.setEmail(entity.getEmail());
             pharmacistDto.setPassword(entity.getPassword());
             pharmacistDto.setDeleted(entity.isDeleted());
@@ -24,7 +25,8 @@ public class PharmacistConverter extends Convert<PharmacistDto, Pharmacist> {
         Pharmacist pharmacist = new Pharmacist();
         if(pharmacist != null){
             pharmacist.setId(dto.getId());
-            pharmacist.setFirstName(dto.getLastName());
+            pharmacist.setFirstName(dto.getFirstName());
+            pharmacist.setLastName(dto.getLastName());
             pharmacist.setEmail(dto.getEmail());
             pharmacist.setPassword(dto.getPassword());
             pharmacist.setDeleted(dto.isDeleted());
