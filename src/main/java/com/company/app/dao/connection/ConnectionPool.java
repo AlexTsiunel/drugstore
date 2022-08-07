@@ -68,6 +68,7 @@ public class ConnectionPool {
         for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
             try {
                 freeConnections.take().reallyClose();
+                log.info("Connection closed");
             } catch (SQLException | InterruptedException e) {
                 log.error("Failed to destroy the pool", e);
             }
