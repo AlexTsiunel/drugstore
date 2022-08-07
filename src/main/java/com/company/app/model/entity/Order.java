@@ -16,7 +16,7 @@ public class Order extends PersistableEntityImpl {
 
     public enum OrderStatus{
         PROCESSING,
-        AWAITING_PAYMENT,
+        PENDING,
         PAID,
         CANCELED
     }

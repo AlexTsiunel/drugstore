@@ -14,7 +14,7 @@ TRUNCATE TABLE recipe_infos CASCADE;
 
 INSERT INTO orderstatuses (name)
 VALUES ('PROCESSING'),
-	   ('AWAITING_PAYMENT'),
+	   ('PENDING'),
 	   ('PAID'),
 	   ('CANCELED');
 
@@ -82,28 +82,28 @@ VALUES ('Matthew', 'Weiss','weiss@gmail.com', 'weiss101'),
    
 INSERT INTO orders (pharmacist_id, client_id, total_coast, orderstatus_id)
 VALUES (1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PROCESSING')),
-	(1, 2, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
-	(2, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
-	(1, 4, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
+	(1, 2, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
+	(2, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
+	(1, 4, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
 	(1, 3, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(2, 2, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
-	(1, 12, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
-	(1, 14, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
+	(1, 12, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
+	(1, 14, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
 	(2, 19, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(1, 17, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(2, 9, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
-	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
+	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
 	(2, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'CANCELED')),
-	(1, 12, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
-	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
+	(1, 12, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
+	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
 	(2, 19, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(1, 15, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(1, 17, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
 	(2, 9, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PAID')),
-	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT')),
+	(1, 1, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING')),
 	(2, 5, 20.8,(SELECT id FROM orderstatuses WHERE name = 'CANCELED')),
-	(1, 6, 20.8,(SELECT id FROM orderstatuses WHERE name = 'AWAITING_PAYMENT'));
+	(1, 6, 20.8,(SELECT id FROM orderstatuses WHERE name = 'PENDING'));
 
 --HELGA!!!!!!!
 INSERT INTO drugs (name, release_form, dosage_form_id, route_administration_id, is_recipe, price, quantity_in_stock)
