@@ -1,6 +1,8 @@
 package com.company.app.controller.command;
 
 import com.company.app.controller.command.client.AllClientsCommand;
+import com.company.app.controller.command.client.CreateClientCommand;
+import com.company.app.controller.command.client.CreateClientFormCommand;
 import com.company.app.controller.command.client.GetClientCommand;
 import com.company.app.controller.command.drug.AllDrugsCommand;
 import com.company.app.controller.command.drug.GetDrugCommand;
@@ -26,6 +28,8 @@ public class CommandFactory {
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("clients", new AllClientsCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("client", new GetClientCommand(ServiceFactory.getInstance().getService(ClientService.class)));
+        commands.put("create_client_form", new CreateClientFormCommand());
+        commands.put("create_client", new CreateClientCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("orders", new AllOrdersCommand(ServiceFactory.getInstance().getService(OrderService.class)));
         commands.put("order", new GetOrderCommand(ServiceFactory.getInstance().getService(OrderService.class)));
         commands.put("pharmacists", new AllPharmacistCommand(ServiceFactory.getInstance().getService(PharmacistService.class)));
