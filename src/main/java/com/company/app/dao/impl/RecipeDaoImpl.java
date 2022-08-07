@@ -37,8 +37,8 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public Recipe getById(Long id) {
         log.debug("Database query. Table recipes");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -55,9 +55,9 @@ public class RecipeDaoImpl implements RecipeDao {
     public Recipe saveOrUpdate(Recipe entity) {
         log.debug("Database query. Table recipes");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -69,7 +69,7 @@ public class RecipeDaoImpl implements RecipeDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -85,9 +85,9 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public List<Recipe> getAll() {
         log.debug("Database query. Table recipes");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Recipe> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -103,8 +103,8 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table recipes");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -122,8 +122,8 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public List<Recipe> getAllByDoctorId(long id) {
         log.debug("Database query. Table recipes");
-        try {
-            List<Recipe> list = getRecipes(SELECT_ALL_BY_DOCTOR_ID, id);
+        try (Connection connection = dataSource.getConnection()) {
+            List<Recipe> list = getRecipes(connection, SELECT_ALL_BY_DOCTOR_ID, id);
             log.debug("Executed method: getAllByDoctorId");
             return list;
         } catch (SQLException e) {
@@ -135,8 +135,8 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public List<Recipe> getAllByClientId(long id) {
         log.debug("Database query. Table recipes");
-        try {
-            List<Recipe> list = getRecipes(SELECT_ALL_BY_CLIENT_ID, id);
+        try (Connection connection = dataSource.getConnection()) {
+            List<Recipe> list = getRecipes(connection, SELECT_ALL_BY_CLIENT_ID, id);
             log.debug("Executed method: getAllByClientId");
             return list;
         } catch (SQLException e) {
@@ -163,9 +163,9 @@ public class RecipeDaoImpl implements RecipeDao {
         statement.setDate(4, (Date) entity.getStartDate());
     }
 
-    private List<Recipe> getRecipes(String SqlQuery, long id) throws SQLException {
+    private List<Recipe> getRecipes(Connection connection, String SqlQuery, long id) throws SQLException {
         List<Recipe> list = new ArrayList<>();
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(SqlQuery);
+        PreparedStatement statement = connection.prepareStatement(SqlQuery);
         statement.setLong(1, id);
         ResultSet result = statement.executeQuery();
         while (result.next()) {

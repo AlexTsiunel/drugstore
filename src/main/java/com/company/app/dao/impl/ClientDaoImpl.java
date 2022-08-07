@@ -6,12 +6,10 @@ import com.company.app.model.entity.Client;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Log4j2
 public class ClientDaoImpl implements ClientDao {
     private final DataSource dataSource;
@@ -31,8 +29,8 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public Client getById(Long id) {
         log.debug("Database query. Table clients");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -49,9 +47,9 @@ public class ClientDaoImpl implements ClientDao {
     public Client saveOrUpdate(Client entity) {
         log.debug("Database query. Table clients");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -63,7 +61,7 @@ public class ClientDaoImpl implements ClientDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -79,9 +77,9 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public List<Client> getAll() {
         log.debug("Database query. Table clients");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Client> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -97,8 +95,8 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table clients");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -112,6 +110,7 @@ public class ClientDaoImpl implements ClientDao {
         }
         return false;
     }
+
     private Client processEntity(ResultSet result) throws SQLException {
         Client client = new Client();
         client.setId(result.getLong("id"));
@@ -122,6 +121,7 @@ public class ClientDaoImpl implements ClientDao {
         client.setDeleted(result.getBoolean("deleted"));
         return client;
     }
+
     private void processStatement(Client entity, PreparedStatement statement) throws SQLException {
         statement.setString(1, entity.getFirstName());
         statement.setString(2, entity.getLastName());

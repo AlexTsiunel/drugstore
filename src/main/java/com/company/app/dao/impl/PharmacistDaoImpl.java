@@ -7,19 +7,17 @@ import com.company.app.model.entity.Pharmacist;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Log4j2
 public class PharmacistDaoImpl implements PharmacistDao {
     private final DataSource dataSource;
 
 
-    private static final String SELECT_ALL = "SELECT p.id, p.first_name, p.last_name, p.email, p.password FROM pharmacists p WHERE p.deleted = FALSE";
-    private static final String SELECT_BY_ID = "SELECT p.id, p.first_name, p.last_name, p.email, p.password FROM pharmacists p WHERE p.id = ? p.deleted = FALSE";
+    private static final String SELECT_ALL = "SELECT p.id, p.first_name, p.last_name, p.email, p.password, p.deleted FROM pharmacists p WHERE p.deleted = FALSE";
+    private static final String SELECT_BY_ID = "SELECT p.id, p.first_name, p.last_name, p.email, p.password, p.deleted FROM pharmacists p WHERE p.id = ? AND p.deleted = FALSE";
     private static final String INSERT = "INSERT INTO pharmacists (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE pharmacists SET first_name = ?, last_name = ?, email= ?, password = ? WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE pharmacists SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
@@ -31,8 +29,8 @@ public class PharmacistDaoImpl implements PharmacistDao {
     @Override
     public Pharmacist getById(Long id) {
         log.debug("Database query. Table pharmacists");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -49,9 +47,9 @@ public class PharmacistDaoImpl implements PharmacistDao {
     public Pharmacist saveOrUpdate(Pharmacist entity) {
         log.debug("Database query. Table pharmacists");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -63,7 +61,7 @@ public class PharmacistDaoImpl implements PharmacistDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -79,9 +77,9 @@ public class PharmacistDaoImpl implements PharmacistDao {
     @Override
     public List<Pharmacist> getAll() {
         log.debug("Database query. Table pharmacists");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Pharmacist> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -97,8 +95,8 @@ public class PharmacistDaoImpl implements PharmacistDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table pharmacists");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -112,6 +110,7 @@ public class PharmacistDaoImpl implements PharmacistDao {
         }
         return false;
     }
+
     private Pharmacist processEntity(ResultSet result) throws SQLException {
         Pharmacist pharmacist = new Pharmacist();
         pharmacist.setId(result.getLong("id"));

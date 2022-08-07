@@ -9,10 +9,7 @@ import com.company.app.model.entity.RecipeInfo;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +34,8 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
     @Override
     public RecipeInfo getById(Long id) {
         log.debug("Database query. Table recipeInfos");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -55,9 +52,9 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
     public RecipeInfo saveOrUpdate(RecipeInfo entity) {
         log.debug("Database query. Table recipeInfos");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -69,7 +66,7 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(3, entity.getId());
                 statement.executeUpdate();
@@ -85,9 +82,9 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
     @Override
     public List<RecipeInfo> getAll() {
         log.debug("Database query. Table recipeInfos");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<RecipeInfo> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -103,8 +100,8 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table recipeInfos");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -119,6 +116,25 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
         return false;
     }
 
+    @Override
+    public List<Drug> getAllByRecipeId(long id) {
+        log.debug("Database query. Table recipe_infos");
+        try (Connection connection = dataSource.getConnection()) {
+            List<Drug> list = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_DRUGS_BY_RECIPE_ID);
+            statement.setLong(1, id);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                list.add(drugDao.getById(result.getLong("drug_id")));
+            }
+            log.debug("Executed method: getAllDrugsByRecipeId");
+            return list;
+        } catch (SQLException e) {
+            log.error("Method failed: getAllDrugsByRecipeId", e);
+        }
+        return null;
+    }
+
     private RecipeInfo processEntity(ResultSet result) throws SQLException {
         RecipeInfo recipeInfo = new RecipeInfo();
         recipeInfo.setId(result.getLong("id"));
@@ -131,24 +147,5 @@ public class RecipeInfoDaoImpl implements RecipeInfoDao {
     private void processStatement(RecipeInfo entity, PreparedStatement statement) throws SQLException {
         statement.setLong(1, entity.getDrug().getId());
         statement.setLong(2, entity.getRecipeId());
-    }
-
-    @Override
-    public List<Drug> getAllByRecipeId(long id) {
-        log.debug("Database query. Table recipe_infos");
-        try {
-            List<Drug> list = new ArrayList<>();
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_ALL_DRUGS_BY_RECIPE_ID);
-            statement.setLong(1, id);
-            ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                list.add(drugDao.getById(result.getLong("drug_id")));
-            }
-            log.debug("Executed method: getAllDrugsByRecipeId");
-            return list;
-        } catch (SQLException e) {
-            log.error("Method failed: getAllDrugsByRecipeId", e);
-        }
-        return null;
     }
 }

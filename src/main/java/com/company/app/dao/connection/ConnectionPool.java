@@ -1,5 +1,6 @@
 package com.company.app.dao.connection;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
+@Log4j2
 public class ConnectionPool {
 
     private BlockingQueue<ProxyConnection> freeConnections;
@@ -18,7 +19,6 @@ public class ConnectionPool {
 
     private final static int DEFAULT_POOL_SIZE = 16;
 
-    private static Logger logger = LogManager.getLogger(ConnectionPool.class);
 
     ConnectionPool(String driver, String url, String user, String password) {
         freeConnections = new LinkedBlockingDeque<>(DEFAULT_POOL_SIZE);
@@ -26,15 +26,15 @@ public class ConnectionPool {
 
         try {
             Class.forName(driver);
-            logger.info("Databased driver loaded");
+            log.info("Databased driver loaded");
             for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
                 Connection connection = DriverManager.getConnection(url, user, password);
                 freeConnections.offer(new ProxyConnection(connection));
-                logger.info("Connection created");
+                log.info("Connection created");
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            logger.error("Failed to connection created");
+            log.error("Failed to connection created");
         }
     }
 
@@ -42,10 +42,17 @@ public class ConnectionPool {
         ProxyConnection connection = null;
 
         try {
+            if (freeConnections.size() == 0){
+                throw new RuntimeException("Out of free database connections");
+            }
             connection = freeConnections.take();
             givenAwayConnections.offer(connection);
+            log.info("Connection received");
+            if(freeConnections.size() + givenAwayConnections.size() != DEFAULT_POOL_SIZE){
+                throw new RuntimeException("Database connection lost");
+            }
         } catch (InterruptedException e) {
-            logger.error("Failed to get Connection", e);
+            log.error("Failed to get Connection", e);
         }
         return connection;
     }
@@ -53,7 +60,8 @@ public class ConnectionPool {
         if (connection instanceof ProxyConnection proxy && givenAwayConnections.remove(connection)) {
             freeConnections.offer(proxy);
         } else {
-            logger.warn("Returned not proxy connection");
+            log.warn("Returned not proxy connection");
+            throw new RuntimeException("Returned not proxy connection");
         }
     }
     public void destroyPool() {
@@ -61,7 +69,7 @@ public class ConnectionPool {
             try {
                 freeConnections.take().reallyClose();
             } catch (SQLException | InterruptedException e) {
-                logger.error("Failed to destroy the pool", e);
+                log.error("Failed to destroy the pool", e);
             }
         }
         deregisterDrivers();
@@ -71,9 +79,9 @@ public class ConnectionPool {
         DriverManager.getDrivers().asIterator().forEachRemaining(driver -> {
             try {
                 DriverManager.deregisterDriver(driver);
-                logger.info("Driver ={} deregistered", driver);
+                log.info("Driver ={} deregistered", driver);
             } catch (SQLException e) {
-                logger.error("Failed deregister database drivers", e);
+                log.error("Failed deregister database drivers", e);
             }
         });
     }

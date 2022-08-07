@@ -9,10 +9,7 @@ import com.company.app.model.entity.OrderInfo;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +22,12 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     private final DrugDao drugDao;
 
 
-    private static final String SELECT_ALL = "SELECT  oi.id, oi.drug_id, oi.order_id, oi.drug_quantity, oi.drug_price FROM order_infos oi WHERE oi.deleted = FALSE";
-    private static final String SELECT_BY_ID = "SELECT  oi.id, oi.drug_id, oi.order_id, oi.drug_quantity, oi.drug_price FROM order_infos oi WHERE oi.id = ? AND oi.deleted = FALSE";
+    private static final String SELECT_ALL = "SELECT  oi.id, oi.drug_id, oi.order_id, oi.drug_quantity, oi.drug_price, oi.deleted FROM order_infos oi WHERE oi.deleted = FALSE";
+    private static final String SELECT_BY_ID = "SELECT  oi.id, oi.drug_id, oi.order_id, oi.drug_quantity, oi.drug_price, oi.deleted FROM order_infos oi WHERE oi.id = ? AND oi.deleted = FALSE";
     private static final String INSERT = "INSERT INTO order_infos (drug_id, order_id, drug_quantity, drug_price) VALUES (?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE order_infos SET drug_id = ?, order_id = ?, drug_quantity= ?, drug_price = ? WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE order_infos SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
+
     private static final String SELECT_DRUGS_MAP = "SELECT  oi.drug_id, oi.drug_quantity FROM order_infos oi WHERE oi.order_id = ? AND oi.deleted = FALSE";
 
 
@@ -41,8 +39,8 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     @Override
     public OrderInfo getById(Long id) {
         log.debug("Database query. Table order_infos");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -59,9 +57,9 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     public OrderInfo saveOrUpdate(OrderInfo entity) {
         log.debug("Database query. Table order_infos");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -73,7 +71,7 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -89,9 +87,9 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     @Override
     public List<OrderInfo> getAll() {
         log.debug("Database query. Table order_infos");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<OrderInfo> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -107,8 +105,8 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table order_infos");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -124,28 +122,30 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     }
 
     @Override
-    public Map<Drug, Integer> getMapDrugs(Long id) {
+    public Map<Drug, Integer> getMapDrugsByOrderId(Long id) {
 
         log.debug("Database query. Table order_infos");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             Map<Drug, Integer> map = new HashMap<>();
-            Statement statement = dataSource.getConnection().createStatement();
-            ResultSet result = statement.executeQuery(SELECT_ALL);
+            PreparedStatement statement = connection.prepareStatement(SELECT_DRUGS_MAP);
+            statement.setLong(1, id);
+            ResultSet result = statement.executeQuery();
             while (result.next()) {
                 Long drugId = result.getLong("drug_id");
                 Integer drugQuantity = result.getInt("drug_quantity");
                 map.put(drugDao.getById(drugId), drugQuantity);
             }
-            log.debug("Executed method: getAll");
+            log.debug("Executed method: getMapDrugsByOrderId");
             return map;
         } catch (SQLException e) {
-            log.error("Method failed: getAll", e);
+            log.error("Method failed: getMapDrugsByOrderId", e);
         }
         return null;
     }
 
     private OrderInfo processEntity(ResultSet result) throws SQLException {
         OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setId(result.getLong("id"));
         orderInfo.setDrug(drugDao.getById(result.getLong("drug_id")));
         orderInfo.setOrderId(result.getLong("order_id"));
         orderInfo.setDrugQuantity(result.getInt("drug_quantity"));

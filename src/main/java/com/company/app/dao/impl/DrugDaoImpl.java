@@ -7,10 +7,7 @@ import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +40,8 @@ public class DrugDaoImpl implements DrugDao {
     @Override
     public Drug getById(Long id) {
         logger.debug("Database query. Table drugs");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -61,9 +58,9 @@ public class DrugDaoImpl implements DrugDao {
     public Drug saveOrUpdate(Drug entity) {
         logger.debug("Database query. Table drugs");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -75,7 +72,7 @@ public class DrugDaoImpl implements DrugDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(8, entity.getId());
                 statement.executeUpdate();
@@ -91,9 +88,9 @@ public class DrugDaoImpl implements DrugDao {
     @Override
     public List<Drug> getAll() {
         logger.debug("Database query. Table drugs");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Drug> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -109,8 +106,8 @@ public class DrugDaoImpl implements DrugDao {
     @Override
     public boolean delete(Long id) {
         logger.debug("Database query. Table drugs");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {

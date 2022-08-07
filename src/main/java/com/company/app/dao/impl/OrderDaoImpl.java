@@ -9,10 +9,7 @@ import com.company.app.model.entity.Order;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +20,16 @@ public class OrderDaoImpl implements OrderDao {
     private final PharmacistDao pharmacistDao;
     private final OrderInfoDao orderInfoDao;
 
-    private static final String SELECT_ALL = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, o.orderstatus_id FROM orders o WHERE o.deleted = FALSE";
-    private static final String SELECT_BY_ID = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, o.orderstatus_id FROM orders o WHERE o.id = ? o.deleted = FALSE";
+    private static final String SELECT_ALL = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, os.name AS status, o.deleted  \n" +
+            "FROM orders o \n" +
+            "JOIN orderstatuses os \n" +
+            "ON os.id = o.orderstatus_id \n" +
+            "WHERE o.deleted = FALSE";
+    private static final String SELECT_BY_ID = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, os.name AS status, o.deleted \n" +
+            "FROM orders o \n" +
+            "JOIN orderstatuses os \n" +
+            "ON os.id = o.orderstatus_id \n" +
+            "WHERE o.id = ? AND o.deleted = FALSE";
     private static final String INSERT = "INSERT INTO orders (pharmacist_id, client_id, total_coast, orderstatus_id) VALUES (?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE orders SET pharmacist_id = ?, client_id = ?, total_coast= ?, orderstatus_id = ? WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE orders SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
@@ -41,8 +46,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order getById(Long id) {
         log.debug("Database query. Table orders");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -59,9 +64,9 @@ public class OrderDaoImpl implements OrderDao {
     public Order saveOrUpdate(Order entity) {
         log.debug("Database query. Table orders");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -73,7 +78,7 @@ public class OrderDaoImpl implements OrderDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -89,9 +94,9 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getAll() {
         log.debug("Database query. Table orders");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Order> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -107,8 +112,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table orders");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
@@ -126,8 +131,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getAllByClientId(long id) {
         log.debug("Database query. Table orders");
-        try {
-            List<Order> list = getOrders(SELECT_ALL_BY_CLIENT_ID, id);
+        try (Connection connection = dataSource.getConnection()) {
+            List<Order> list = getOrders(connection, SELECT_ALL_BY_CLIENT_ID, id);
             log.debug("Executed method: getAllByClientId");
             return list;
         } catch (SQLException e) {
@@ -139,8 +144,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getAllByPharmacistId(long id) {
         log.debug("Database query. Table orders");
-        try {
-            List<Order> list = getOrders(SELECT_ALL_BY_PHARMACIST_ID, id);
+        try (Connection connection = dataSource.getConnection()) {
+            List<Order> list = getOrders(connection, SELECT_ALL_BY_PHARMACIST_ID, id);
             log.debug("Executed method: getAllByPharmacistId");
             return list;
         } catch (SQLException e) {
@@ -151,9 +156,10 @@ public class OrderDaoImpl implements OrderDao {
 
     private Order processEntity(ResultSet result) throws SQLException {
         Order order = new Order();
+        order.setId(result.getLong("id"));
         order.setClient(clientDao.getById(result.getLong("client_id")));
         order.setPharmacist(pharmacistDao.getById(result.getLong("pharmacist_id")));
-        order.setDrugs(orderInfoDao.getMapDrugs(result.getLong("id")));
+        order.setDrugs(orderInfoDao.getMapDrugsByOrderId(result.getLong("id")));
         order.setTotalCoast(result.getBigDecimal("total_coast"));
         order.setStatus(Order.OrderStatus.valueOf(result.getString("status")));
         order.setDeleted(result.getBoolean("deleted"));
@@ -167,9 +173,9 @@ public class OrderDaoImpl implements OrderDao {
         statement.setString(4, entity.getStatus().toString());
     }
 
-    private List<Order> getOrders(String SqlQuery, long id) throws SQLException {
+    private List<Order> getOrders(Connection connection, String SqlQuery, long id) throws SQLException {
         List<Order> list = new ArrayList<>();
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(SqlQuery);
+        PreparedStatement statement = connection.prepareStatement(SqlQuery);
         statement.setLong(1, id);
         ResultSet result = statement.executeQuery();
         while (result.next()) {

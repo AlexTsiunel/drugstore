@@ -53,11 +53,11 @@ public class ProxyConnection implements Connection {
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close(){
         DataSource.getInstance().getConnectionPool().releaseConnection(this);
     }
 
-    public void reallyClose() throws SQLException {
+    void reallyClose() throws SQLException {
         connection.close();
     }
 

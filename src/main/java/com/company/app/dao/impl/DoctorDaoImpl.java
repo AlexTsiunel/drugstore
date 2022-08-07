@@ -7,10 +7,7 @@ import com.company.app.model.entity.Doctor;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +30,8 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Doctor getById(Long id) {
         log.debug("Database query. Table doctors");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(SELECT_BY_ID);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
@@ -51,9 +48,9 @@ public class DoctorDaoImpl implements DoctorDao {
     public Doctor saveOrUpdate(Doctor entity) {
         log.debug("Database query. Table doctors");
         PreparedStatement statement;
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             if (entity.getId() == null) {
-                statement = dataSource.getConnection().prepareStatement(INSERT,
+                statement = connection.prepareStatement(INSERT,
                         Statement.RETURN_GENERATED_KEYS);
                 processStatement(entity, statement);
                 statement.executeUpdate();
@@ -65,7 +62,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 }
 
             } else {
-                statement = dataSource.getConnection().prepareStatement(UPDATE);
+                statement = connection.prepareStatement(UPDATE);
                 processStatement(entity, statement);
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
@@ -81,9 +78,9 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getAll() {
         log.debug("Database query. Table doctors");
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             List<Doctor> list = new ArrayList<>();
-            Statement statement = dataSource.getConnection().createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(SELECT_ALL);
             while (result.next()) {
                 list.add(processEntity(result));
@@ -99,8 +96,8 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public boolean delete(Long id) {
         log.debug("Database query. Table doctors");
-        try {
-            PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE);
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted == 1) {
