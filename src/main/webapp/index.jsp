@@ -10,6 +10,7 @@
       <li><a href="controller?command=drugs">All drugs</a></li>
       <li><a href="controller?command=orders">All orders</a></li>
       <li><a href="controller?command=create_client_form">Register new Client</a></li>
+      <li><a href="controller?command=create_drug_form">Add new drug</a></li>
     </ul>
   </body>
 </html>

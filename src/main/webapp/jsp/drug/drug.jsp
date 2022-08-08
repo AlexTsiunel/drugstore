@@ -7,6 +7,9 @@
   </head>
   <body>
     <h1>The Drug</h1>
+    <c:if test="${requestScope.message!=null}">
+      <p>${requestScope.message}</p>
+    </c:if>
     <h3>Id</h3>
     <p>${drug.id}</p>
     <h3>Name</h3>
