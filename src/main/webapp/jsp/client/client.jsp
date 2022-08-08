@@ -7,6 +7,9 @@
   </head>
   <body>
     <h1>The Client</h1>
+    <c:if test="${requestScope.message!=null}">
+      <p>${requestScope.message}</p>
+    </c:if>
     <h3>Id</h3>
     <p>${client.id}</p>
     <h3>First Name</h3>

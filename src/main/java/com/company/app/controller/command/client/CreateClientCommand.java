@@ -26,7 +26,7 @@ public class CreateClientCommand implements Command {
         client.setPassword(password);
         ClientDto newClient = clientService.saveOrUpdate(client);
         req.setAttribute("client", newClient);
-        req.setAttribute("massage", "New client was created");
+        req.setAttribute("message", "New client was created");
         return "jsp/client/client.jsp";
     }
 }
