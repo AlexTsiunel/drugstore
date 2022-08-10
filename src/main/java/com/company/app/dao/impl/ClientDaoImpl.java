@@ -20,6 +20,7 @@ public class ClientDaoImpl implements ClientDao {
     private static final String INSERT = "INSERT INTO clients (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE clients SET first_name = ?, last_name = ?, email= ?, password = ? WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE clients SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
+    private static final String SELECT_BY_EMAIL = "SELECT c.id, c.first_name, c.last_name, c.email, c.password, c.deleted FROM clients c WHERE c.email = ? AND c.deleted = FALSE";
 
 
     public ClientDaoImpl(DataSource dataSource) {
@@ -109,6 +110,23 @@ public class ClientDaoImpl implements ClientDao {
             log.error("Method failed: delete", e);
         }
         return false;
+    }
+
+    @Override
+    public Client getByEmail(String email) {
+        log.debug("Database query. Table clients");
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMAIL);
+            statement.setString(1, email);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                log.debug("Executed method: getByEmail");
+                return processEntity(result);
+            }
+        } catch (SQLException e) {
+            log.error("Method failed: getByEmail", e);
+        }
+        return null;
     }
 
     private Client processEntity(ResultSet result) throws SQLException {

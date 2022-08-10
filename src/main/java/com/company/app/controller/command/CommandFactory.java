@@ -5,6 +5,8 @@ import com.company.app.controller.command.drug.AllDrugsCommand;
 import com.company.app.controller.command.drug.CreateDrugCommand;
 import com.company.app.controller.command.drug.CreateDrugFormCommand;
 import com.company.app.controller.command.drug.GetDrugCommand;
+import com.company.app.controller.command.login.LoginCommand;
+import com.company.app.controller.command.login.LoginFormCommand;
 import com.company.app.controller.command.order.AllOrdersCommand;
 import com.company.app.controller.command.order.GetOrderCommand;
 import com.company.app.controller.command.pharmacist.AllPharmacistCommand;
@@ -23,6 +25,8 @@ public class CommandFactory {
 
     private CommandFactory() {
         this.commands = new HashMap<>();
+        commands.put("login_form", new LoginFormCommand());
+        commands.put("login", new LoginCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("create_drug_form", new CreateDrugFormCommand());

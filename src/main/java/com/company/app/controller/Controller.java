@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+
 @Log4j2
 @WebServlet("/controller")
 public class Controller extends HttpServlet {
@@ -35,6 +36,23 @@ public class Controller extends HttpServlet {
         String command = req.getParameter("command");
         Command commandInstance = CommandFactory.getInstance().getCommand(command);
         String path = commandInstance.execute(req);
+//        !!!exceptions will be handled here!!!
+//        String path;
+//        try{
+//            path = commandInstance.execute(req);
+//
+//        }catch (Exception e){
+//            path = handleException(req, e);
+//        }
         req.getRequestDispatcher(path).forward(req, resp);
     }
+
+//    private static String handleException(HttpServletRequest req, Exception e) {
+//        String page = "jsp/inValidError";
+//        if(e instanceof  ValidationException validationException){
+//            page = "jsp/validError";
+//            req.setAttribute("errmsg", validationException.getValidMsg());
+//        }
+//        return page;
+//    }
 }

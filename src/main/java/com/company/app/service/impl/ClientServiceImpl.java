@@ -9,10 +9,9 @@ import com.company.app.model.exception.NoDeleteElementException;
 import com.company.app.model.exception.NoSuchElementException;
 import com.company.app.service.ClientService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+
 @Log4j2
 public class ClientServiceImpl implements ClientService {
     private final ClientDao clientDao;
@@ -28,8 +27,8 @@ public class ClientServiceImpl implements ClientService {
     public ClientDto getById(Long id) {
         log.debug("Calling the 'getById' method");
         Client client = clientDao.getById(id);
-        if(client == null){
-            throw new NoSuchElementException(String.format("Client with id=%d not found",id));
+        if (client == null) {
+            throw new NoSuchElementException(String.format("Client with id=%d not found", id));
         }
         return clientConverter.convertEntityToDto(client);
     }
@@ -51,8 +50,21 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void delete(Long id) {
         log.debug("Calling the 'delete' method");
-        if(!clientDao.delete(id)){
+        if (!clientDao.delete(id)) {
             throw new NoDeleteElementException("Failed to delete client with id=" + id);
         }
+    }
+
+    @Override
+    public ClientDto login(String email, String password) {
+        log.debug("Calling the 'login' method");
+        Client client = clientDao.getByEmail(email);
+        if (client == null) {
+            throw new NoSuchElementException(String.format("Client with email: %s not found", email));
+        }
+        if (!client.getPassword().equals(password)) {
+            throw new NoSuchElementException("Wrong password entered");
+        }
+        return clientConverter.convertEntityToDto(client);
     }
 }
