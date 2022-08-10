@@ -20,6 +20,8 @@
 				<td><a href="controller?command=client&id=${client.id}">${client.firstName}</a></td>
 				<td><a href="controller?command=client&id=${client.id}">${client.lastName}</a></td>
 				<td><a href="controller?command=client&id=${client.id}">${client.email}</a></td>
+				<td><a href="controller?command=edit_client_form&id=${client.id}">EDIT</a></td>
+
 			</tr>
 		</c:forEach>
 	</table>
