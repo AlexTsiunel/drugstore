@@ -13,11 +13,9 @@ import java.util.Map;
 
 public class CreateOrderCommand implements Command {
     private final OrderService orderService;
-    private final DrugService drugService;
 
-    public CreateOrderCommand(OrderService orderService, DrugService drugService) {
+    public CreateOrderCommand(OrderService orderService) {
         this.orderService = orderService;
-        this.drugService = drugService;
     }
 
     @Override

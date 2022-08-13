@@ -29,8 +29,8 @@ public class CommandFactory {
         commands.put("login", new LoginCommand(ServiceFactory.getInstance().getService(ClientService.class)));
 
         commands.put("add_to_cart", new AddToCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
-        commands.put("remove_to_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
-        commands.put("cart", new ShowCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("remove_from_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("show_cart", new ShowCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
 
         commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
@@ -45,6 +45,8 @@ public class CommandFactory {
 
         commands.put("orders", new AllOrdersCommand(ServiceFactory.getInstance().getService(OrderService.class)));
         commands.put("order", new GetOrderCommand(ServiceFactory.getInstance().getService(OrderService.class)));
+        commands.put("create_order", new CreateOrderCommand(ServiceFactory.getInstance().getService(OrderService.class)));
+
 
         commands.put("pharmacists", new AllPharmacistCommand(ServiceFactory.getInstance().getService(PharmacistService.class)));
         commands.put("pharmacist", new GetPharmacistCommand(ServiceFactory.getInstance().getService(PharmacistService.class)));

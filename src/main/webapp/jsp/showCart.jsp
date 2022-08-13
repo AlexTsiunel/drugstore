@@ -27,7 +27,7 @@
         <td><a href="controller?command=drug&id=${entry.key.id}">${entry.key.price}</a></td>
         <td>
           <form method="post" action="controller">
-            <input type="hidden" name="command" value="remove_to_cart">
+            <input type="hidden" name="command" value="remove_from_cart">
             <input type="hidden" name="drugId" value="${entry.key.id}">
             <input type="submit" value="-">
           </form>
@@ -45,7 +45,12 @@
       </tr>
     </c:forEach>
   </table>
-  <h1>TOTAL COAST: ${totalCoast} </h1>
+  <h3>TOTAL COAST: ${totalCoast} </h3>
+      <form method="post" action="controller">
+        <input type="hidden" name="command" value="create_order">
+        <input type="hidden" name="drugId" value="${entry.key.id}">
+        <input type="submit" value="Buy">
+      </form>
     </c:when>
     <c:otherwise>
       <h3>NO PRODUCTS IN THE CART</h3>

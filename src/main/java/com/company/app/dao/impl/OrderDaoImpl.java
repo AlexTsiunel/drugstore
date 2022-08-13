@@ -5,13 +5,16 @@ import com.company.app.dao.OrderDao;
 import com.company.app.dao.OrderInfoDao;
 import com.company.app.dao.PharmacistDao;
 import com.company.app.dao.connection.DataSource;
+import com.company.app.model.entity.Drug;
 import com.company.app.model.entity.Order;
+import com.company.app.model.entity.OrderInfo;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 public class OrderDaoImpl implements OrderDao {
@@ -74,6 +77,7 @@ public class OrderDaoImpl implements OrderDao {
                 if (keys.next()) {
                     Long id = keys.getLong(1);
                     log.debug("Executed method: saveOrUpdate/save");
+                    saveOrderInfos(entity, id);
                     return getById(id);
                 }
 
@@ -83,6 +87,7 @@ public class OrderDaoImpl implements OrderDao {
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
                 log.debug("Executed method: saveOrUpdate/update");
+//                updateOrderInfos(entity, entity.getId());
                 return getById(entity.getId());
             }
         } catch (SQLException e) {
@@ -168,7 +173,7 @@ public class OrderDaoImpl implements OrderDao {
 
     private void processStatement(Order entity, PreparedStatement statement) throws SQLException {
         statement.setLong(1, entity.getClient().getId());
-        statement.setLong(2, entity.getClient().getId());
+        statement.setLong(2, entity.getPharmacist().getId());
         statement.setBigDecimal(3, entity.getTotalCoast());
         statement.setString(4, entity.getStatus().toString());
     }
@@ -182,5 +187,17 @@ public class OrderDaoImpl implements OrderDao {
             list.add(processEntity(result));
         }
         return list;
+    }
+
+    private void saveOrderInfos(Order entity, Long orderId) {
+        Map<Drug, Integer> drugs = entity.getDrugs();
+        for (Map.Entry<Drug,Integer>entry: drugs.entrySet()){
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setDrug(entry.getKey());
+            orderInfo.setOrderId(orderId);
+            orderInfo.setDrugQuantity(entry.getValue());
+            orderInfo.setDrugPrice(entry.getKey().getPrice());
+            orderInfoDao.saveOrUpdate(orderInfo);
+        }
     }
 }
