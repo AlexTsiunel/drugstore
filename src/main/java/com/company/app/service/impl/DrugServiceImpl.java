@@ -9,7 +9,11 @@ import com.company.app.service.DrugService;
 import com.company.app.model.dto.DrugDto;
 import lombok.extern.log4j.Log4j2;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Log4j2
 public class DrugServiceImpl implements DrugService {
     private DrugDao drugDao;
@@ -48,5 +52,18 @@ public class DrugServiceImpl implements DrugService {
         if(!drugDao.delete(id)){
             throw new NoDeleteElementException("Failed to delete drug with id=" + id);
         }
+    }
+
+    @Override
+    public Map<DrugDto, Integer> convertCartToDrugsMap(Map<Long, Integer> cart) {
+        Map<DrugDto, Integer> drugs = new HashMap<>();
+        if(cart != null) {
+            for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
+                DrugDto drug = drugConverter.convertEntityToDto(drugDao.getById(entry.getKey()));
+                Integer drugQuantity = entry.getValue();
+                drugs.put(drug, drugQuantity);
+            }
+        }
+        return drugs;
     }
 }

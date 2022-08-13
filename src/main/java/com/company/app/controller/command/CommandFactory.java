@@ -27,17 +27,25 @@ public class CommandFactory {
         this.commands = new HashMap<>();
         commands.put("login_form", new LoginFormCommand());
         commands.put("login", new LoginCommand(ServiceFactory.getInstance().getService(ClientService.class)));
+
+        commands.put("add_to_cart", new AddToCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("remove_to_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("cart", new ShowCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+
         commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("create_drug_form", new CreateDrugFormCommand());
         commands.put("create_drug", new CreateDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+
         commands.put("clients", new AllClientsCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("client", new GetClientCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("create_client_form", new CreateClientFormCommand());
         commands.put("edit_client_form", new EditClientFormCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("create_client", new CreateClientCommand(ServiceFactory.getInstance().getService(ClientService.class)));
+
         commands.put("orders", new AllOrdersCommand(ServiceFactory.getInstance().getService(OrderService.class)));
         commands.put("order", new GetOrderCommand(ServiceFactory.getInstance().getService(OrderService.class)));
+
         commands.put("pharmacists", new AllPharmacistCommand(ServiceFactory.getInstance().getService(PharmacistService.class)));
         commands.put("pharmacist", new GetPharmacistCommand(ServiceFactory.getInstance().getService(PharmacistService.class)));
 

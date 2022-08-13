@@ -21,7 +21,7 @@ public class ServiceFactory {
         map.put(DrugService.class, new DrugServiceImpl(DaoFactory.getInstance().getDao(DrugDao.class), ConverterFactory.getInstance().getConverter(DrugConverter.class)));
         map.put(PharmacistService.class, new PharmacistServiceImpl(DaoFactory.getInstance().getDao(PharmacistDao.class), ConverterFactory.getInstance().getConverter(PharmacistConverter.class)));
         map.put(RecipeService.class, new RecipeServiceImpl(DaoFactory.getInstance().getDao(RecipeDao.class), ConverterFactory.getInstance().getConverter(RecipeConverter.class)));
-        map.put(OrderService.class, new OrderServiceImpl(DaoFactory.getInstance().getDao(OrderDao.class), ConverterFactory.getInstance().getConverter(OrderConverter.class)));
+        map.put(OrderService.class, new OrderServiceImpl(DaoFactory.getInstance().getDao(OrderDao.class), DaoFactory.getInstance().getDao(DrugDao.class), ConverterFactory.getInstance().getConverter(OrderConverter.class), ConverterFactory.getInstance().getConverter(DrugConverter.class)));
     }
 
 
