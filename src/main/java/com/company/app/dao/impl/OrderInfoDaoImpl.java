@@ -1,19 +1,15 @@
 package com.company.app.dao.impl;
 
 import com.company.app.dao.DrugDao;
-import com.company.app.dao.OrderDao;
 import com.company.app.dao.OrderInfoDao;
 import com.company.app.dao.connection.DataSource;
-import com.company.app.model.entity.Drug;
 import com.company.app.model.entity.OrderInfo;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Log4j2
@@ -29,6 +25,7 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     private static final String DELETE = "UPDATE order_infos SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
 
     private static final String SELECT_DRUGS_MAP = "SELECT  oi.drug_id, oi.drug_quantity FROM order_infos oi WHERE oi.order_id = ? AND oi.deleted = FALSE";
+    private static final String SELECT_BY_ORDER_ID = "SELECT  oi.id, oi.drug_id, oi.order_id, oi.drug_quantity, oi.drug_price, oi.deleted FROM order_infos oi WHERE oi.order_id = ? AND oi.deleted = FALSE";
 
 
     public OrderInfoDaoImpl(DataSource dataSource, DrugDao drugDao) {
@@ -122,23 +119,20 @@ public class OrderInfoDaoImpl implements OrderInfoDao {
     }
 
     @Override
-    public Map<Drug, Integer> getMapDrugsByOrderId(Long id) {
-
+    public List<OrderInfo> getByOrderId(Long id) {
         log.debug("Database query. Table order_infos");
         try (Connection connection = dataSource.getConnection()) {
-            Map<Drug, Integer> map = new HashMap<>();
-            PreparedStatement statement = connection.prepareStatement(SELECT_DRUGS_MAP);
+            List<OrderInfo> list = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ORDER_ID);
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
-                Long drugId = result.getLong("drug_id");
-                Integer drugQuantity = result.getInt("drug_quantity");
-                map.put(drugDao.getById(drugId), drugQuantity);
+                list.add(processEntity(result));
             }
-            log.debug("Executed method: getMapDrugsByOrderId");
-            return map;
+            log.debug("Executed method: getAll");
+            return list;
         } catch (SQLException e) {
-            log.error("Method failed: getMapDrugsByOrderId", e);
+            log.error("Method failed: getById", e);
         }
         return null;
     }

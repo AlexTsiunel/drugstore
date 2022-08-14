@@ -5,16 +5,15 @@ import com.company.app.dao.OrderDao;
 import com.company.app.dao.OrderInfoDao;
 import com.company.app.dao.PharmacistDao;
 import com.company.app.dao.connection.DataSource;
-import com.company.app.model.entity.Drug;
 import com.company.app.model.entity.Order;
 import com.company.app.model.entity.OrderInfo;
+import com.company.app.model.entity.Pharmacist;
 import com.company.app.model.exception.NoCreatedOrUpdatedElementException;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 public class OrderDaoImpl implements OrderDao {
@@ -33,8 +32,8 @@ public class OrderDaoImpl implements OrderDao {
             "JOIN orderstatuses os \n" +
             "ON os.id = o.orderstatus_id \n" +
             "WHERE o.id = ? AND o.deleted = FALSE";
-    private static final String INSERT = "INSERT INTO orders (pharmacist_id, client_id, total_coast, orderstatus_id) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE orders SET pharmacist_id = ?, client_id = ?, total_coast= ?, orderstatus_id = ? WHERE id = ? AND deleted = FALSE";
+    private static final String INSERT = "INSERT INTO orders (pharmacist_id, client_id, total_coast, orderstatus_id) VALUES (?, ?, ?, (SELECT id FROM orderstatuses WHERE name = ?))";
+    private static final String UPDATE = "UPDATE orders SET pharmacist_id = ?, client_id = ?, total_coast= ?, orderstatus_id = (SELECT id FROM orderstatuses WHERE name = ?) WHERE id = ? AND deleted = FALSE";
     private static final String DELETE = "UPDATE orders SET deleted = TRUE WHERE id = ? AND deleted = FALSE";
     private static final String SELECT_ALL_BY_CLIENT_ID = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, o.orderstatus_id FROM orders o WHERE o.client_id = ? AND o.deleted = FALSE";
     private static final String SELECT_ALL_BY_PHARMACIST_ID = "SELECT o.id, o.pharmacist_id, o.client_id, o.total_coast, o.orderstatus_id FROM orders o WHERE o.pharmacist_id = ? AND o.deleted = FALSE";
@@ -77,7 +76,11 @@ public class OrderDaoImpl implements OrderDao {
                 if (keys.next()) {
                     Long id = keys.getLong(1);
                     log.debug("Executed method: saveOrUpdate/save");
-                    saveOrderInfos(entity, id);
+                    List<OrderInfo> orderInfoList = entity.getOrderInfoList();
+                    for (OrderInfo orderInfo : orderInfoList) {
+                        orderInfo.setOrderId(id);
+                        orderInfoDao.saveOrUpdate(orderInfo);
+                    }
                     return getById(id);
                 }
 
@@ -87,7 +90,6 @@ public class OrderDaoImpl implements OrderDao {
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
                 log.debug("Executed method: saveOrUpdate/update");
-//                updateOrderInfos(entity, entity.getId());
                 return getById(entity.getId());
             }
         } catch (SQLException e) {
@@ -161,21 +163,33 @@ public class OrderDaoImpl implements OrderDao {
 
     private Order processEntity(ResultSet result) throws SQLException {
         Order order = new Order();
-        order.setId(result.getLong("id"));
+        long id = result.getLong("id");
+        order.setId(id);
         order.setClient(clientDao.getById(result.getLong("client_id")));
-        order.setPharmacist(pharmacistDao.getById(result.getLong("pharmacist_id")));
-        order.setDrugs(orderInfoDao.getMapDrugsByOrderId(result.getLong("id")));
+        try {
+            long pharmacistId = result.getLong("pharmacist_id");
+            order.setPharmacist(pharmacistDao.getById(pharmacistId));
+        } catch (Exception e) {
+            order.setPharmacist(null);
+        }
         order.setTotalCoast(result.getBigDecimal("total_coast"));
         order.setStatus(Order.OrderStatus.valueOf(result.getString("status")));
+        order.setOrderInfoList(orderInfoDao.getByOrderId(id));
         order.setDeleted(result.getBoolean("deleted"));
         return order;
     }
 
     private void processStatement(Order entity, PreparedStatement statement) throws SQLException {
-        statement.setLong(1, entity.getClient().getId());
-        statement.setLong(2, entity.getPharmacist().getId());
+        statement.setLong(2, entity.getClient().getId());
+        Pharmacist pharmacist = entity.getPharmacist();
+        if (pharmacist == null) {
+            statement.setNull(1, Types.BIGINT);
+        } else {
+            statement.setLong(1, entity.getPharmacist().getId());
+        }
         statement.setBigDecimal(3, entity.getTotalCoast());
         statement.setString(4, entity.getStatus().toString());
+
     }
 
     private List<Order> getOrders(Connection connection, String SqlQuery, long id) throws SQLException {
@@ -187,17 +201,5 @@ public class OrderDaoImpl implements OrderDao {
             list.add(processEntity(result));
         }
         return list;
-    }
-
-    private void saveOrderInfos(Order entity, Long orderId) {
-        Map<Drug, Integer> drugs = entity.getDrugs();
-        for (Map.Entry<Drug,Integer>entry: drugs.entrySet()){
-            OrderInfo orderInfo = new OrderInfo();
-            orderInfo.setDrug(entry.getKey());
-            orderInfo.setOrderId(orderId);
-            orderInfo.setDrugQuantity(entry.getValue());
-            orderInfo.setDrugPrice(entry.getKey().getPrice());
-            orderInfoDao.saveOrUpdate(orderInfo);
-        }
     }
 }

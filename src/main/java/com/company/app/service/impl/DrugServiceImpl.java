@@ -9,7 +9,6 @@ import com.company.app.service.DrugService;
 import com.company.app.model.dto.DrugDto;
 import lombok.extern.log4j.Log4j2;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +27,8 @@ public class DrugServiceImpl implements DrugService {
     public DrugDto getById(Long id) {
         log.debug("Calling the 'getById' method");
         Drug drug = drugDao.getById(id);
-        if(drug == null){
-            throw new NoSuchElementException(String.format("Drug with id=%d not found",id));
+        if (drug == null) {
+            throw new NoSuchElementException(String.format("Drug with id=%d not found", id));
         }
         return drugConverter.convertEntityToDto(drug);
     }
@@ -49,7 +48,7 @@ public class DrugServiceImpl implements DrugService {
     @Override
     public void delete(Long id) {
         log.debug("Calling the 'delete' method");
-        if(!drugDao.delete(id)){
+        if (!drugDao.delete(id)) {
             throw new NoDeleteElementException("Failed to delete drug with id=" + id);
         }
     }
@@ -57,7 +56,7 @@ public class DrugServiceImpl implements DrugService {
     @Override
     public Map<DrugDto, Integer> convertCartToDrugsMap(Map<Long, Integer> cart) {
         Map<DrugDto, Integer> drugs = new HashMap<>();
-        if(cart != null) {
+        if (cart != null) {
             for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
                 DrugDto drug = drugConverter.convertEntityToDto(drugDao.getById(entry.getKey()));
                 Integer drugQuantity = entry.getValue();

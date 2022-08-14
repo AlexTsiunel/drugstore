@@ -7,7 +7,6 @@ import com.company.app.model.converter.OrderConverter;
 import com.company.app.model.dto.ClientDto;
 import com.company.app.model.dto.DrugDto;
 import com.company.app.model.dto.OrderDto;
-import com.company.app.model.entity.Drug;
 import com.company.app.model.entity.Order;
 import com.company.app.service.OrderService;
 
@@ -57,16 +56,11 @@ public class OrderServiceImpl implements OrderService {
         Map<DrugDto, Integer> drugs = new HashMap<>();
         BigDecimal totalCoast = BigDecimal.ZERO;
         for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
-            //!!!ТУТ OrderInfo вместо Map <DrugDto, Integer>!!!
-//            OrderInfo orderInfo = new OrderInfo();
-//            DrugDto drugDto = drugService.getById(entry.getKey());
-//            orderInfo.setDrug(drugDto);
             DrugDto drug = drugConverter.convertEntityToDto(drugDao.getById(entry.getKey()));
             Integer drugQuantity = entry.getValue();
             totalCoast = totalCoast.add(drug.getPrice().multiply(BigDecimal.valueOf(drugQuantity)));
             drugs.put(drug, drugQuantity);
         }
-
         order.setClient(clientDto);
         order.setDrugs(drugs);
         order.setStatus(OrderDto.OrderStatus.PROCESSING);

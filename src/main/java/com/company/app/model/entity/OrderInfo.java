@@ -1,6 +1,7 @@
 package com.company.app.model.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 

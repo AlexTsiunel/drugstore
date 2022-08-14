@@ -3,10 +3,14 @@ package com.company.app.model.converter;
 import com.company.app.model.api.Convert;
 import com.company.app.model.dto.DrugDto;
 import com.company.app.model.dto.OrderDto;
+import com.company.app.model.dto.PharmacistDto;
 import com.company.app.model.entity.Drug;
 import com.company.app.model.entity.Order;
+import com.company.app.model.entity.OrderInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OrderConverter extends Convert<OrderDto, Order> {
@@ -27,7 +31,7 @@ public class OrderConverter extends Convert<OrderDto, Order> {
             orderDto.setId(entity.getId());
             orderDto.setClient(clientConverter.convertEntityToDto(entity.getClient()));
             orderDto.setPharmacist(pharmacistConverter.convertEntityToDto(entity.getPharmacist()));
-            orderDto.setDrugs(toDtosMap(entity.getDrugs()));
+            orderDto.setDrugs(getMapDrugs(entity));
             orderDto.setTotalCoast(entity.getTotalCoast());
             orderDto.setStatus(toOrderStatusDto(entity.getStatus()));
             orderDto.setDeleted(entity.isDeleted());
@@ -40,7 +44,12 @@ public class OrderConverter extends Convert<OrderDto, Order> {
         Order order = new Order();
         if (orderDto != null) {
             order.setId(orderDto.getId());
-            order.setDrugs(toEntitiesMap(orderDto.getDrugs()));
+            order.setClient(clientConverter.convertDtoToEntity(orderDto.getClient()));
+            PharmacistDto pharmacistDto = orderDto.getPharmacist();
+            if (pharmacistDto != null) {
+                order.setPharmacist(pharmacistConverter.convertDtoToEntity(orderDto.getPharmacist()));
+            }
+            order.setOrderInfoList(getOrderInfoList(orderDto));
             order.setTotalCoast(orderDto.getTotalCoast());
             order.setStatus(toOrderStatusEntity(orderDto.getStatus()));
             order.setDeleted(orderDto.isDeleted());
@@ -60,23 +69,28 @@ public class OrderConverter extends Convert<OrderDto, Order> {
         return dtoOrderStatuses[ordinal];
     }
 
-    private Map<Drug, Integer> toEntitiesMap(Map<DrugDto, Integer> mapDto) {
-        Map<Drug, Integer> mapEntity = new HashMap<>();
-        if (mapDto != null) {
-            for (Map.Entry<DrugDto, Integer> entry : mapDto.entrySet()) {
-                mapEntity.put(drugConverter.convertDtoToEntity(entry.getKey()), entry.getValue());
-            }
+    private Map<DrugDto, Integer> getMapDrugs(Order entity) {
+        Map<DrugDto, Integer> drugs = new HashMap<>();
+        List<OrderInfo> orderInfoList = entity.getOrderInfoList();
+        for (OrderInfo orderInfo : orderInfoList) {
+            Drug drug = orderInfo.getDrug();
+            drug.setPrice(orderInfo.getDrugPrice());
+            drugs.put(drugConverter.convertEntityToDto(drug), orderInfo.getDrugQuantity());
         }
-        return mapEntity;
+        return drugs;
     }
 
-    private Map<DrugDto, Integer> toDtosMap(Map<Drug, Integer> mapEntity) {
-        Map<DrugDto, Integer> mapDto = new HashMap<>();
-        if (mapEntity != null) {
-            for (Map.Entry<Drug, Integer> entry : mapEntity.entrySet()) {
-                mapDto.put(drugConverter.convertEntityToDto(entry.getKey()), entry.getValue());
-            }
+    private List<OrderInfo> getOrderInfoList(OrderDto orderDto) {
+        List<OrderInfo> list = new ArrayList<>();
+        Map<DrugDto, Integer> drugs = orderDto.getDrugs();
+        for (Map.Entry<DrugDto, Integer> entry : drugs.entrySet()) {
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setDrug(drugConverter.convertDtoToEntity(entry.getKey()));
+            orderInfo.setOrderId(orderDto.getId());
+            orderInfo.setDrugQuantity(entry.getValue());
+            orderInfo.setDrugPrice(entry.getKey().getPrice());
+            list.add(orderInfo);
         }
-        return mapDto;
+        return list;
     }
 }

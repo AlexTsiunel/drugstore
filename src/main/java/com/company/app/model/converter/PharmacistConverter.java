@@ -9,7 +9,7 @@ public class PharmacistConverter extends Convert<PharmacistDto, Pharmacist> {
     @Override
     public PharmacistDto convertEntityToDto(Pharmacist entity) {
         PharmacistDto pharmacistDto = new PharmacistDto();
-        if(pharmacistDto != null){
+        if(entity != null){
             pharmacistDto.setId(entity.getId());
             pharmacistDto.setFirstName(entity.getFirstName());
             pharmacistDto.setLastName(entity.getLastName());
@@ -23,7 +23,7 @@ public class PharmacistConverter extends Convert<PharmacistDto, Pharmacist> {
     @Override
     public Pharmacist convertDtoToEntity(PharmacistDto dto) {
         Pharmacist pharmacist = new Pharmacist();
-        if(pharmacist != null){
+        if(dto != null){
             pharmacist.setId(dto.getId());
             pharmacist.setFirstName(dto.getFirstName());
             pharmacist.setLastName(dto.getLastName());

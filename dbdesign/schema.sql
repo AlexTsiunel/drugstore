@@ -67,7 +67,7 @@ CREATE TABLE recipes (
 
 CREATE TABLE orders (
 	id BIGSERIAL NOT NULL,
-	pharmacist_id BIGINT NOT NULL,
+	pharmacist_id BIGINT,
 	client_id BIGINT NOT NULL,
 	total_coast DECIMAL NOT NULL,
 	orderstatus_id BIGINT NOT NULL REFERENCES orderstatuses,
