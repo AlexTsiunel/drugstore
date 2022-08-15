@@ -6,9 +6,12 @@
   <title>Cart</title>
 </head>
 <body>
+<jsp:include page="navbar.jsp"/>
   <h1>Cart</h1>
-  <c:choose>
-    <c:when test="${drugs.size()>0}">
+<c:if test="${requestScope.cart == null}">
+  <p>You haven't added anything in your cart</p>
+</c:if>
+<c:if test="${requestScope.cart != null}">
   <table>
     <th>#</th>
     <th>Id</th>
@@ -18,13 +21,13 @@
     <th>Add Drug</th>
     <th>Quantity</th>
     <th>Remove Drug</th>
-    <c:forEach items="${drugs}" var="entry" varStatus="counter">
+    <c:forEach items="${requestScope.cart.drugs}" var="entry" varStatus="counter">
       <tr>
         <td>${counter.count}</td>
         <td><a href="controller?command=drug&id=${entry.key.id}">${entry.key.id}</td>
         <td><a href="controller?command=drug&id=${entry.key.id}">${entry.key.name}</a></td>
-        <td><a href="controller?command=drug&id=${entry.key.id}">${entry.key.releaseForm}</a></td>
-        <td><a href="controller?command=drug&id=${entry.key.id}">${entry.key.price}</a></td>
+        <td>${entry.key.releaseForm}</td>
+        <td>${entry.key.price}</td>
         <td>
           <form method="post" action="controller">
             <input type="hidden" name="command" value="remove_from_cart">
@@ -45,17 +48,12 @@
       </tr>
     </c:forEach>
   </table>
-  <h3>TOTAL COAST: ${totalCoast} </h3>
+  <h3>TOTAL COAST: ${requestScope.cart.totalCoast} </h3>
       <form method="post" action="controller">
         <input type="hidden" name="command" value="create_order">
         <input type="hidden" name="drugId" value="${entry.key.id}">
         <input type="submit" value="Buy">
       </form>
-    </c:when>
-    <c:otherwise>
-      <h3>NO PRODUCTS IN THE CART</h3>
-    </c:otherwise>
-  </c:choose>
-  <li><a href="controller?command=drugs">All drugs</a></li>
+</c:if>
 </body>
 </html>

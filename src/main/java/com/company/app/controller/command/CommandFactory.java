@@ -7,6 +7,7 @@ import com.company.app.controller.command.drug.CreateDrugFormCommand;
 import com.company.app.controller.command.drug.GetDrugCommand;
 import com.company.app.controller.command.login.LoginCommand;
 import com.company.app.controller.command.login.LoginFormCommand;
+import com.company.app.controller.command.login.LogoutCommand;
 import com.company.app.controller.command.order.AllOrdersCommand;
 import com.company.app.controller.command.order.GetOrderCommand;
 import com.company.app.controller.command.pharmacist.AllPharmacistCommand;
@@ -18,19 +19,22 @@ import java.util.Map;
 
 public class CommandFactory {
     private Map<String, Command> commands;
-    private static class CommandFactoryHolder{
+
+    private static class CommandFactoryHolder {
         public static final CommandFactory HOLDER_INSTANCE = new CommandFactory();
 
     }
 
     private CommandFactory() {
         this.commands = new HashMap<>();
+        commands.put("home", new ShowHomeCommand());
         commands.put("login_form", new LoginFormCommand());
         commands.put("login", new LoginCommand(ServiceFactory.getInstance().getService(ClientService.class)));
+        commands.put("logout", new LogoutCommand());
 
         commands.put("add_to_cart", new AddToCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("remove_from_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
-        commands.put("show_cart", new ShowCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("show_cart", new ShowCartCommand(ServiceFactory.getInstance().getService(OrderService.class)));
 
         commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));

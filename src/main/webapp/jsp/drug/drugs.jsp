@@ -7,6 +7,7 @@
 <title>Drugs</title>
 </head>
 <body>
+<jsp:include page="../navbar.jsp"/>
 	<table>
 		<th>#</th>
 		<th>Id</th>
@@ -31,6 +32,5 @@
 			</tr>
 		</c:forEach>
 	</table>
-	<h3><a href="/drugstore">Main page</a></h3>
 </body>
 </html>

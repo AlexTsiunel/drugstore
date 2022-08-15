@@ -7,5 +7,7 @@ import com.company.app.model.dto.OrderDto;
 import java.util.Map;
 
 public interface OrderService extends AbstractService<Long, OrderDto>{
-    public OrderDto created(Map<Long, Integer> map, ClientDto clientDto);
+//    public OrderDto created(Map<Long, Integer> map, ClientDto clientDto);
+
+    OrderDto processCart(Map<Long, Integer> cart, ClientDto client);
 }

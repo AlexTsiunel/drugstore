@@ -6,6 +6,7 @@
     <title>Order</title>
   </head>
   <body>
+  <jsp:include page="../navbar.jsp"/>
     <table>
       <tr>
         <th>Id</th>
@@ -30,6 +31,5 @@
         <td><a href="controller?command=pharmacist&id=${order.pharmacist.id}">${order.pharmacist.firstName}   ${order.pharmacist.lastName}</a></td>
       </tr>
     </table>
-    <h3><a href="controller?command=orders">All orders</a></h3>
   </body>
 </html>

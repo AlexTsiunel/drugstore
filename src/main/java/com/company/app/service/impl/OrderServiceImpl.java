@@ -49,22 +49,48 @@ public class OrderServiceImpl implements OrderService {
         orderDao.delete(id);
     }
 
-    @Override
-    public OrderDto created(Map<Long, Integer> cart, ClientDto clientDto) {
+//    @Override
+//    public OrderDto created(Map<Long, Integer> cart, ClientDto clientDto) {
+//        OrderDto order = new OrderDto();
+//        Map<DrugDto, Integer> drugs = new HashMap<>();
+//        BigDecimal totalCoast = BigDecimal.ZERO;
+//        for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
+//            DrugDto drug = drugConverter.convertEntityToDto(drugDao.getById(entry.getKey()));
+//            Integer drugQuantity = entry.getValue();
+//            totalCoast = totalCoast.add(drug.getPrice().multiply(BigDecimal.valueOf(drugQuantity)));
+//            drugs.put(drug, drugQuantity);
+//        }
+//        order.setClient(clientDto);
+//        order.setDrugs(drugs);
+//        order.setStatus(OrderDto.OrderStatus.PROCESSING);
+//        order.setTotalCoast(totalCoast);
+//        return orderConverter.convertEntityToDto(orderDao.saveOrUpdate(orderConverter.convertDtoToEntity(order)));
+//    }
 
+    @Override
+    public OrderDto processCart(Map<Long, Integer> cart, ClientDto clientDto) {
         OrderDto order = new OrderDto();
         Map<DrugDto, Integer> drugs = new HashMap<>();
-        BigDecimal totalCoast = BigDecimal.ZERO;
         for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
             DrugDto drug = drugConverter.convertEntityToDto(drugDao.getById(entry.getKey()));
             Integer drugQuantity = entry.getValue();
-            totalCoast = totalCoast.add(drug.getPrice().multiply(BigDecimal.valueOf(drugQuantity)));
             drugs.put(drug, drugQuantity);
         }
         order.setClient(clientDto);
         order.setDrugs(drugs);
         order.setStatus(OrderDto.OrderStatus.PROCESSING);
+        BigDecimal totalCoast = calculatePrice(drugs);
         order.setTotalCoast(totalCoast);
-        return orderConverter.convertEntityToDto(orderDao.saveOrUpdate(orderConverter.convertDtoToEntity(order)));
+        return order;
+    }
+
+    private BigDecimal calculatePrice(Map<DrugDto, Integer> drugs){
+        BigDecimal totalCoast = BigDecimal.ZERO;
+        for (Map.Entry<DrugDto, Integer> entry : drugs.entrySet()) {
+            DrugDto drug = entry.getKey();
+            Integer drugQuantity = entry.getValue();
+            totalCoast = totalCoast.add(drug.getPrice().multiply(BigDecimal.valueOf(drugQuantity)));
+        }
+        return totalCoast;
     }
 }
