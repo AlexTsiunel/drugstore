@@ -32,6 +32,7 @@
           <form method="post" action="controller">
             <input type="hidden" name="command" value="remove_from_cart">
             <input type="hidden" name="drugId" value="${entry.key.id}">
+            <input type="hidden" name="redirect" value="?command=show_cart">
             <input type="submit" value="-">
           </form>
         </td>
@@ -42,6 +43,7 @@
           <form method="post" action="controller">
             <input type="hidden" name="command" value="add_to_cart">
             <input type="hidden" name="drugId" value="${entry.key.id}">
+            <input type="hidden" name="redirect" value="?command=show_cart">
             <input type="submit" value="+">
           </form>
         </td>

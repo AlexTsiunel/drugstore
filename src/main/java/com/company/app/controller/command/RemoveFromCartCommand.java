@@ -31,17 +31,6 @@ public class RemoveFromCartCommand implements Command {
             }
         }
         session.setAttribute("cart", cart);
-
-        //Логику подсчета totalCoast вынести в сервис
-        Map<DrugDto, Integer> drugs = drugService.convertCartToDrugsMap(cart);
-        BigDecimal totalCoast = BigDecimal.ZERO;
-        for(Map.Entry<DrugDto, Integer> entry:drugs.entrySet()){
-            BigDecimal entryCoast = entry.getKey().getPrice();
-            BigDecimal totalEntryCoast = entryCoast.multiply(BigDecimal.valueOf(entry.getValue()));
-            totalCoast=totalCoast.add(totalEntryCoast);
-        }
-        req.setAttribute("drugs", drugs);
-        req.setAttribute("totalCoast", totalCoast);
-        return "jsp/showCart.jsp";
+        return "redirect:controller" + req.getParameter("redirect");
     }
 }

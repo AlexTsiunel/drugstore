@@ -26,6 +26,7 @@
 					<form method="post" action="controller">
 						<input type="hidden" name="command" value="add_to_cart">
 						<input type="hidden" name="drugId" value="${drug.id}">
+						<input type="hidden" name="redirect" value="?command=drugs">
 						<input type="submit" value="Add to cart">
 					</form>
 				</td>

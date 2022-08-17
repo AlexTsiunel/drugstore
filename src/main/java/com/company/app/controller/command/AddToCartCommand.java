@@ -33,15 +33,6 @@ public class AddToCartCommand implements Command {
             cart.put(drugId, quantity+1);
         }
         session.setAttribute("cart", cart);
-//       Тут ХЗ как на drugs правильно перейти???
-        /*
-        Добавление в карзину происходит из разных мест:
-        1)jsp/drug/drugs.jsp;
-        2)jsp/showCart.jsp;
-        Нужно возвращаться на ту форму откуда происходит добавление в корзину
-         */
-        List<DrugDto> drugs = drugService.getAll();
-        req.setAttribute("drugs", drugs);
-        return "jsp/drug/drugs.jsp";
+        return "redirect:controller" + req.getParameter("redirect");
     }
 }

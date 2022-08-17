@@ -15,6 +15,7 @@ import java.io.IOException;
 @Log4j2
 @WebServlet("/controller")
 public class Controller extends HttpServlet {
+    public static final String REDIRECT = "redirect:";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -44,7 +45,12 @@ public class Controller extends HttpServlet {
 //        }catch (Exception e){
 //            path = handleException(req, e);
 //        }
-        req.getRequestDispatcher(path).forward(req, resp);
+        if(path.startsWith(REDIRECT)){
+            resp.sendRedirect(req.getContextPath()+"/"+path.substring(REDIRECT.length()));
+
+        }else{
+            req.getRequestDispatcher(path).forward(req, resp);
+        }
     }
 
 //    private static String handleException(HttpServletRequest req, Exception e) {
