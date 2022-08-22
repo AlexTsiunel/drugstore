@@ -13,6 +13,8 @@ import com.company.app.controller.command.order.GetOrderCommand;
 import com.company.app.controller.command.pharmacist.AllPharmacistCommand;
 import com.company.app.controller.command.pharmacist.GetPharmacistCommand;
 import com.company.app.service.*;
+import com.company.app.service.paging.PagingFactory;
+import com.company.app.service.paging.PagingUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class CommandFactory {
         commands.put("remove_from_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("show_cart", new ShowCartCommand(ServiceFactory.getInstance().getService(OrderService.class)));
 
-        commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class)));
+        commands.put("drugs", new AllDrugsCommand(ServiceFactory.getInstance().getService(DrugService.class), PagingFactory.getInstance().getPaging(PagingUtil.class)));
         commands.put("drug", new GetDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("create_drug_form", new CreateDrugFormCommand());
         commands.put("create_drug", new CreateDrugCommand(ServiceFactory.getInstance().getService(DrugService.class)));

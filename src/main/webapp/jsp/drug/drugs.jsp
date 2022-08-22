@@ -8,6 +8,7 @@
 </head>
 <body>
 <jsp:include page="../navbar.jsp"/>
+<jsp:include page="../pageNavigation.jsp"/>
 	<table>
 		<th>#</th>
 		<th>Id</th>
