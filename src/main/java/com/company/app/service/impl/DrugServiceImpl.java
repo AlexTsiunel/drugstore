@@ -46,6 +46,16 @@ public class DrugServiceImpl implements DrugService {
     }
 
     @Override
+    public List<DrugDto> getAll(int limit, long offset) {
+        return drugConverter.convertEntitiesToDtos(drugDao.getAll(limit, offset));
+    }
+
+    @Override
+    public long count() {
+        return drugDao.count();
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Calling the 'delete' method");
         if (!drugDao.delete(id)) {
