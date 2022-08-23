@@ -17,9 +17,9 @@
 			<tr>
 				<td>${counter.count}</td>
 				<td><a href="controller?command=pharmacist&id=${pharmacist.id}">${pharmacist.id}</a></td>
-				<td><a href="controller?command=pharmacist&id=${pharmacist.id}">${pharmacist.firstName}</a></td>
-				<td><a href="controller?command=pharmacist&id=${pharmacist.id}">${pharmacist.lastName}</a></td>
-				<td><a href="controller?command=pharmacist&id=${pharmacist.id}">${pharmacist.email}</a></td>
+				<td><a href="controller?command=pharmacist&id=${pharmacist.id}"><c:out value="${pharmacist.firstName}"/></a></td>
+				<td><a href="controller?command=pharmacist&id=${pharmacist.id}"><c:out value="${pharmacist.lastName}"/></a></td>
+				<td><a href="controller?command=pharmacist&id=${pharmacist.id}"><c:out value="${pharmacist.email}"/></a></td>
 			</tr>
 		</c:forEach>
 	</table>

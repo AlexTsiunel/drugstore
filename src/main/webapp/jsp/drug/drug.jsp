@@ -13,9 +13,9 @@
     <h3>Id</h3>
     <p>${drug.id}</p>
     <h3>Name</h3>
-    <p>${drug.name}</p>
+    <p><c:out value="${drug.name}"/></p>
     <h3>Release Form</h3>
-    <p>${drug.releaseForm}</p>
+    <p><c:out value="${drug.releaseForm}"/></p>
     <h3>Price</h3>
     <p>${drug.price}</p>
     <h3><a href="controller?command=drugs">All drugs</a></h3>

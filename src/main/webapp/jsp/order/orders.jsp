@@ -18,10 +18,10 @@
 			<tr>
 				<td>${counter.count}</td>
 				<td><a href="controller?command=order&id=${order.id}">order-${order.id}</a></td>
-				<td><a href="controller?command=client&id=${order.client.id}">${order.client.firstName}  ${order.client.lastName}</a></td>
+				<td><a href="controller?command=client&id=${order.client.id}"><c:out value="${order.client.firstName}"/>  <c:out value="${order.client.lastName}"/></a></td>
 				<td>${order.totalCoast}</td>
 				<td>${order.status}</td>
-				<td><a href="controller?command=pharmacist&id=${order.pharmacist.id}">${order.pharmacist.firstName}  ${order.pharmacist.lastName}</a></td>
+				<td><a href="controller?command=pharmacist&id=${order.pharmacist.id}"><c:out value="${order.pharmacist.firstName}"/>  <c:out value="${order.pharmacist.lastName}"/></a></td>
 			</tr>
 		</c:forEach>
 	</table>

@@ -20,9 +20,9 @@
 			<tr>
 				<td>${counter.count}</td>
 				<td><a href="controller?command=drug&id=${drug.id}">${drug.id}</a></td>
-				<td><a href="controller?command=drug&id=${drug.id}">${drug.name}</a></td>
-				<td><a href="controller?command=drug&id=${drug.id}">${drug.releaseForm}</a></td>
-				<td><a href="controller?command=drug&id=${drug.id}">${drug.price}</a></td>
+				<td><a href="controller?command=drug&id=${drug.id}"><c:out value="${drug.name}"/></a></td>
+				<td><a href="controller?command=drug&id=${drug.id}"><c:out value="${drug.releaseForm}"/></a></td>
+				<td><a href="controller?command=drug&id=${drug.id}"><c:out value="${drug.price}"/></a></td>
 				<td>
 					<form method="post" action="controller">
 						<input type="hidden" name="command" value="add_to_cart">

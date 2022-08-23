@@ -10,11 +10,11 @@
     <h3>Id</h3>
     <p>${pharmacist.id}</p>
     <h3>First Name</h3>
-    <p>${pharmacist.firstName}</p>
+    <p><c:out value="${pharmacist.firstName}"/></p>
     <h3>Last Name</h3>
-    <p>${pharmacist.lastName}</p>
+    <p><c:out value="${pharmacist.lastName}"/></p>
     <h3>Email</h3>
-    <p>${pharmacist.email}</p>
+    <p><c:out value="${pharmacist.email}"/></p>
     <h3><a href="controller?command=pharmacists">All pharmacists</a></h3>
   </body>
 </html>
