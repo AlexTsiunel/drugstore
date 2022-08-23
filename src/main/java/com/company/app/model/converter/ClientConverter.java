@@ -5,6 +5,11 @@ import com.company.app.model.dto.ClientDto;
 import com.company.app.model.entity.Client;
 
 public class ClientConverter extends Convert<ClientDto, Client> {
+private final DigestUtil digestUtil;
+
+    public ClientConverter(DigestUtil digestUtil) {
+        this.digestUtil = digestUtil;
+    }
 
     @Override
     public ClientDto convertEntityToDto(Client entity) {
@@ -14,7 +19,6 @@ public class ClientConverter extends Convert<ClientDto, Client> {
             clientDto.setFirstName(entity.getFirstName());
             clientDto.setLastName(entity.getLastName());
             clientDto.setEmail(entity.getEmail());
-            clientDto.setPassword(entity.getPassword());
             clientDto.setDeleted(entity.isDeleted());
         }
         return clientDto;
@@ -28,7 +32,8 @@ public class ClientConverter extends Convert<ClientDto, Client> {
             client.setFirstName(clientDto.getFirstName());
             client.setLastName(clientDto.getLastName());
             client.setEmail(clientDto.getEmail());
-            client.setPassword(clientDto.getPassword());
+            String hashedPassword = digestUtil.hashPassword(clientDto.getPassword());
+            client.setPassword(hashedPassword);
             client.setDeleted(client.isDeleted());
         }
         return client;

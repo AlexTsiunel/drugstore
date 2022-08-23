@@ -2,6 +2,7 @@ package com.company.app.service.impl;
 
 import com.company.app.dao.ClientDao;
 import com.company.app.model.converter.ClientConverter;
+import com.company.app.model.converter.DigestUtil;
 import com.company.app.model.dto.ClientDto;
 
 import com.company.app.model.entity.Client;
@@ -17,10 +18,13 @@ public class ClientServiceImpl implements ClientService {
     private final ClientDao clientDao;
     private final ClientConverter clientConverter;
 
+    private final DigestUtil digestUtil;
 
-    public ClientServiceImpl(ClientDao clientDao, ClientConverter clientConverter) {
+
+    public ClientServiceImpl(ClientDao clientDao, ClientConverter clientConverter, DigestUtil digestUtil) {
         this.clientDao = clientDao;
         this.clientConverter = clientConverter;
+        this.digestUtil = digestUtil;
     }
 
     @Override
@@ -62,7 +66,8 @@ public class ClientServiceImpl implements ClientService {
         if (client == null) {
             throw new NoSuchElementException(String.format("Client with email: %s not found", email));
         }
-        if (!client.getPassword().equals(password)) {
+        String hashedPassword = digestUtil.hashPassword(password);
+        if (!client.getPassword().equals(hashedPassword)) {
             throw new NoSuchElementException("Wrong password entered");
         }
         return clientConverter.convertEntityToDto(client);
