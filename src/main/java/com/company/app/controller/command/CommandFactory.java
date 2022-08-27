@@ -33,6 +33,7 @@ public class CommandFactory {
         commands.put("login_form", new LoginFormCommand());
         commands.put("login", new LoginCommand(ServiceFactory.getInstance().getService(ClientService.class)));
         commands.put("logout", new LogoutCommand());
+        commands.put("change_language", new ChangeLanguageCommand());
 
         commands.put("add_to_cart", new AddToCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
         commands.put("remove_from_cart", new RemoveFromCartCommand(ServiceFactory.getInstance().getService(DrugService.class)));
